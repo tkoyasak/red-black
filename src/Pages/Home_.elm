@@ -1,11 +1,126 @@
-module Pages.Home_ exposing (page)
+module Pages.Home_ exposing (Model, Msg, page)
 
-import Html
+import Form exposing (..)
+import Html exposing (Html)
+import Page exposing (Page)
 import View exposing (View)
+import X.Dict as Dict exposing (Dict)
 
 
-page : View msg
+page : Page Model Msg
 page =
-    { title = "Homepage"
-    , body = [ Html.text "Hello, world!" ]
+    Page.sandbox
+        { init = init
+        , update = update
+        , view = view
+        }
+
+
+
+-- INIT
+
+
+type alias Model =
+    { form : Form
+    , problems : List Problem
+    , dict : Dict Int String
+    }
+
+
+type alias Form =
+    { key : String
+    , value : String
+    }
+
+
+type alias Pair =
+    { key : Int
+    , value : String
+    }
+
+
+type Problem
+    = InvalidEntry String
+
+
+init : Model
+init =
+    { form = { key = "", value = "" }
+    , problems = []
+    , dict = Dict.empty
+    }
+
+
+
+-- UPDATE
+
+
+type Msg
+    = EnteredKey String
+    | EnteredValue String
+    | SubmittedInsert
+    | SubmittedRemove
+
+
+update : Msg -> Model -> Model
+update msg ({ form } as model) =
+    let
+        setForm : Form -> Model
+        setForm a =
+            { model | form = a }
+    in
+    case msg of
+        EnteredKey key ->
+            setForm { form | key = key }
+
+        EnteredValue value ->
+            setForm { form | value = value }
+
+        SubmittedInsert ->
+            case validate model.form of
+                Ok pair ->
+                    { form = { key = "", value = "" }
+                    , problems = []
+                    , dict = Dict.insert pair.key pair.value model.dict
+                    }
+
+                Err problems ->
+                    { model | problems = problems }
+
+        SubmittedRemove ->
+            case validate model.form of
+                Ok pair ->
+                    { form = { key = "", value = "" }
+                    , problems = []
+                    , dict = Dict.remove pair.key model.dict
+                    }
+
+                Err problems ->
+                    { model | problems = problems }
+
+
+validate : Form -> Result (List Problem) Pair
+validate form =
+    let
+        trimmedForm =
+            { key = String.trim form.key
+            , value = String.trim form.value
+            }
+    in
+    case String.toInt trimmedForm.key of
+        Just x ->
+            Ok { key = x, value = trimmedForm.value }
+
+        Nothing ->
+            Err [ InvalidEntry "Unable to convert String to Int." ]
+
+
+
+-- VIEW
+
+
+view : Model -> View Msg
+view model =
+    { title = "Pages.Home_"
+    , body = [ Html.text "/Home_" ]
     }
