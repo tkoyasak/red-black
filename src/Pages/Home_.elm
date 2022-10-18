@@ -1,7 +1,9 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
-import Form exposing (..)
-import Html exposing (Html)
+import Browser.Dom exposing (Error(..))
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Page exposing (Page)
 import View exposing (View)
 import X.Dict as Dict exposing (Dict)
@@ -41,6 +43,7 @@ type alias Pair =
 
 type Problem
     = InvalidEntry String
+    | NotFoundMember String
 
 
 init : Model
@@ -58,8 +61,8 @@ init =
 type Msg
     = EnteredKey String
     | EnteredValue String
-    | SubmittedInsert
-    | SubmittedRemove
+    | InsertPair
+    | RemovePair
 
 
 update : Msg -> Model -> Model
@@ -76,7 +79,7 @@ update msg ({ form } as model) =
         EnteredValue value ->
             setForm { form | value = value }
 
-        SubmittedInsert ->
+        InsertPair ->
             case validate model.form of
                 Ok pair ->
                     { form = { key = "", value = "" }
@@ -87,13 +90,17 @@ update msg ({ form } as model) =
                 Err problems ->
                     { model | problems = problems }
 
-        SubmittedRemove ->
+        RemovePair ->
             case validate model.form of
                 Ok pair ->
-                    { form = { key = "", value = "" }
-                    , problems = []
-                    , dict = Dict.remove pair.key model.dict
-                    }
+                    if Dict.member pair.key model.dict then
+                        { form = { key = "", value = "" }
+                        , problems = []
+                        , dict = Dict.remove pair.key model.dict
+                        }
+
+                    else
+                        { model | problems = [ NotFoundMember "There is no such member in Dict." ] }
 
                 Err problems ->
                     { model | problems = problems }
@@ -121,6 +128,40 @@ validate form =
 
 view : Model -> View Msg
 view model =
-    { title = "Pages.Home_"
-    , body = [ Html.text "/Home_" ]
+    { title = "visualize-red-black"
+    , body =
+        [ div
+            [ class "" ]
+            [ h1
+                []
+                [ text "visualize-red-black" ]
+            , button
+                [ onClick InsertPair ]
+                [ text "Insert" ]
+            , button
+                [ onClick RemovePair ]
+                [ text "Remove" ]
+            , input
+                [ value model.form.key, onInput EnteredKey, placeholder "key" ]
+                []
+            , input
+                [ value model.form.value, onInput EnteredValue, placeholder "value" ]
+                []
+            , ul []
+                (List.map
+                    (\problem ->
+                        case problem of
+                            InvalidEntry str ->
+                                li [] [ text str ]
+
+                            NotFoundMember str ->
+                                li [] [ text str ]
+                    )
+                    model.problems
+                )
+            , p
+                []
+                [ text <| "Dict size : " ++ String.fromInt (Dict.size model.dict) ]
+            ]
+        ]
     }
