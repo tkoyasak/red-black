@@ -1,10 +1,14 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
 import Browser.Dom exposing (Error(..))
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html, button, div, h1, input, li, p, text, ul)
+import Html.Attributes exposing (class, placeholder, value)
+import Html.Events exposing (onClick, onInput)
 import Page exposing (Page)
+import Svg exposing (Svg, rect, text_)
+import Svg.Attributes exposing (fill, height, rx, ry, stroke, textAnchor, transform, width, x, x1, x2, y, y1, y2)
+import TreeDiagram exposing (Tree, node, topToBottom)
+import TreeDiagram.Svg exposing (draw)
 import View exposing (View)
 import X.Dict as Dict exposing (Dict)
 
@@ -25,8 +29,20 @@ page =
 type alias Model =
     { form : Form
     , problems : List Problem
-    , dict : Dict Int String
+    , expr : RBT
     }
+
+
+type alias RBT =
+    Dict Key Value
+
+
+type alias Key =
+    Int
+
+
+type alias Value =
+    String
 
 
 type alias Form =
@@ -36,8 +52,8 @@ type alias Form =
 
 
 type alias Pair =
-    { key : Int
-    , value : String
+    { key : Key
+    , value : Value
     }
 
 
@@ -50,7 +66,7 @@ init : Model
 init =
     { form = { key = "", value = "" }
     , problems = []
-    , dict = Dict.empty
+    , expr = Dict.empty
     }
 
 
@@ -84,7 +100,7 @@ update msg ({ form } as model) =
                 Ok pair ->
                     { form = { key = "", value = "" }
                     , problems = []
-                    , dict = Dict.insert pair.key pair.value model.dict
+                    , expr = Dict.insert pair.key pair.value model.expr
                     }
 
                 Err problems ->
@@ -93,10 +109,10 @@ update msg ({ form } as model) =
         RemovePair ->
             case validate model.form of
                 Ok pair ->
-                    if Dict.member pair.key model.dict then
+                    if Dict.member pair.key model.expr then
                         { form = { key = "", value = "" }
                         , problems = []
-                        , dict = Dict.remove pair.key model.dict
+                        , expr = Dict.remove pair.key model.expr
                         }
 
                     else
@@ -161,7 +177,96 @@ view model =
                 )
             , p
                 []
-                [ text <| "Dict size : " ++ String.fromInt (Dict.size model.dict) ]
+                [ text <| "Dict size : " ++ String.fromInt (Dict.size model.expr) ]
+            , drawRBT model.expr
             ]
         ]
     }
+
+
+drawRBT : RBT -> Html msg
+drawRBT expr =
+    draw
+        { orientation = topToBottom
+        , levelHeight = 40
+        , siblingDistance = 100
+        , subtreeDistance = 80
+        , padding = 40
+        }
+        drawNode
+        drawEdge
+        (visualizeRBT expr)
+
+
+type alias Node =
+    { color : Dict.NColor
+    , pair : Pair
+    }
+
+
+drawNode : Node -> Svg msg
+drawNode node =
+    let
+        content =
+            String.fromInt node.pair.key
+
+        bg =
+            case node.color of
+                Dict.Black ->
+                    "#000000"
+
+                Dict.Red ->
+                    "#ff0000"
+    in
+    Svg.g
+        []
+        [ rect
+            [ rx "15"
+            , ry "15"
+            , x "-40"
+            , y "-15"
+            , height "30"
+            , width "80"
+            , stroke "black"
+            , fill bg
+            ]
+            []
+        , text_
+            [ textAnchor "middle"
+            , transform "translate(0,5)"
+            , fill "#ffffff"
+            ]
+            [ text content ]
+        ]
+
+
+drawEdge : ( Float, Float ) -> Svg msg
+drawEdge ( targetX, targetY ) =
+    Svg.line
+        [ x1 "0"
+        , y1 "0"
+        , x2 (String.fromFloat targetX)
+        , y2 (String.fromFloat targetY)
+        , stroke "black"
+        ]
+        []
+
+
+visualizeRBT : RBT -> Tree Node
+visualizeRBT expr =
+    case expr of
+        Dict.RBNode_elm_builtin color key value lExpr rExpr ->
+            node
+                { color = color
+                , pair = { key = key, value = value }
+                }
+                [ visualizeRBT lExpr
+                , visualizeRBT rExpr
+                ]
+
+        Dict.RBEmpty_elm_builtin ->
+            node
+                { color = Dict.Black
+                , pair = { key = 0, value = "" }
+                }
+                []

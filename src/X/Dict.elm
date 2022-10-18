@@ -1,5 +1,5 @@
 module X.Dict exposing
-  ( Dict(..)
+  ( Dict(..), NColor(..)
   , empty, singleton, insert, update, remove
   , isEmpty, member, get, size
   , keys, values, toList, fromList
