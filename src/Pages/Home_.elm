@@ -34,37 +34,24 @@ type alias Model =
 
 
 type alias RBT =
-    Dict Key Value
+    Dict Key ()
 
 
 type alias Key =
     Int
 
 
-type alias Value =
+type alias Form =
     String
 
 
-type alias Form =
-    { key : String
-    , value : String
-    }
-
-
-type alias Pair =
-    { key : Key
-    , value : Value
-    }
-
-
-type Problem
-    = InvalidEntry String
-    | NotFoundMember String
+type alias Problem =
+    String
 
 
 init : Model
 init =
-    { form = { key = "", value = "" }
+    { form = ""
     , problems = []
     , expr = Dict.empty
     }
@@ -76,66 +63,73 @@ init =
 
 type Msg
     = EnteredKey String
-    | EnteredValue String
-    | InsertPair
-    | RemovePair
+    | InsertKey
+    | RemoveKey
 
 
 update : Msg -> Model -> Model
-update msg ({ form } as model) =
-    let
-        setForm : Form -> Model
-        setForm a =
-            { model | form = a }
-    in
+update msg model =
     case msg of
-        EnteredKey key ->
-            setForm { form | key = key }
+        EnteredKey form ->
+            { model | form = form }
 
-        EnteredValue value ->
-            setForm { form | value = value }
-
-        InsertPair ->
-            case validate model.form of
-                Ok pair ->
-                    { form = { key = "", value = "" }
+        InsertKey ->
+            case insertOk model of
+                Ok key ->
+                    { form = ""
                     , problems = []
-                    , expr = Dict.insert pair.key pair.value model.expr
+                    , expr = Dict.insert key () model.expr
                     }
 
                 Err problems ->
                     { model | problems = problems }
 
-        RemovePair ->
-            case validate model.form of
-                Ok pair ->
-                    if Dict.member pair.key model.expr then
-                        { form = { key = "", value = "" }
-                        , problems = []
-                        , expr = Dict.remove pair.key model.expr
-                        }
-
-                    else
-                        { model | problems = [ NotFoundMember "There is no such member in Dict." ] }
+        RemoveKey ->
+            case removeOk model of
+                Ok key ->
+                    { form = ""
+                    , problems = []
+                    , expr = Dict.remove key model.expr
+                    }
 
                 Err problems ->
                     { model | problems = problems }
 
 
-validate : Form -> Result (List Problem) Pair
-validate form =
+insertOk : Model -> Result (List Problem) Key
+insertOk model =
     let
         trimmedForm =
-            { key = String.trim form.key
-            , value = String.trim form.value
-            }
+            String.trim model.form
     in
-    case String.toInt trimmedForm.key of
+    case String.toInt trimmedForm of
         Just x ->
-            Ok { key = x, value = trimmedForm.value }
+            if Dict.member x model.expr then
+                Err [ "That's already a member. [" ++ trimmedForm ++ "]" ]
+
+            else
+                Ok x
 
         Nothing ->
-            Err [ InvalidEntry "Unable to convert String to Int." ]
+            Err [ "Unable to convert \"" ++ trimmedForm ++ "\" to Int." ]
+
+
+removeOk : Model -> Result (List Problem) Key
+removeOk model =
+    let
+        trimmedForm =
+            String.trim model.form
+    in
+    case String.toInt trimmedForm of
+        Just x ->
+            if Dict.member x model.expr then
+                Ok x
+
+            else
+                Err [ "There is no such member. [" ++ trimmedForm ++ "]" ]
+
+        Nothing ->
+            Err [ "Unable to convert \"" ++ trimmedForm ++ "\" to Int." ]
 
 
 
@@ -152,32 +146,24 @@ view model =
                 []
                 [ text "visualize-red-black" ]
             , button
-                [ onClick InsertPair ]
+                [ onClick InsertKey ]
                 [ text "Insert" ]
             , button
-                [ onClick RemovePair ]
+                [ onClick RemoveKey ]
                 [ text "Remove" ]
             , input
-                [ value model.form.key, onInput EnteredKey, placeholder "key" ]
-                []
-            , input
-                [ value model.form.value, onInput EnteredValue, placeholder "value" ]
+                [ value model.form, onInput EnteredKey, placeholder "key" ]
                 []
             , ul []
                 (List.map
                     (\problem ->
-                        case problem of
-                            InvalidEntry str ->
-                                li [] [ text str ]
-
-                            NotFoundMember str ->
-                                li [] [ text str ]
+                        li [] [ text problem ]
                     )
                     model.problems
                 )
             , p
                 []
-                [ text <| "Dict size : " ++ String.fromInt (Dict.size model.expr) ]
+                [ text <| "size : " ++ String.fromInt (Dict.size model.expr) ]
             , drawRBT model.expr
             ]
         ]
@@ -200,7 +186,7 @@ drawRBT expr =
 
 type alias Node =
     { color : Dict.NColor
-    , pair : Pair
+    , key : Key
     }
 
 
@@ -208,7 +194,7 @@ drawNode : Node -> Svg msg
 drawNode node =
     let
         content =
-            String.fromInt node.pair.key
+            String.fromInt node.key
 
         bg =
             case node.color of
@@ -255,10 +241,10 @@ drawEdge ( targetX, targetY ) =
 visualizeRBT : RBT -> Tree Node
 visualizeRBT expr =
     case expr of
-        Dict.RBNode_elm_builtin color key value lExpr rExpr ->
+        Dict.RBNode_elm_builtin color key () lExpr rExpr ->
             node
                 { color = color
-                , pair = { key = key, value = value }
+                , key = key
                 }
                 [ visualizeRBT lExpr
                 , visualizeRBT rExpr
@@ -267,6 +253,6 @@ visualizeRBT expr =
         Dict.RBEmpty_elm_builtin ->
             node
                 { color = Dict.Black
-                , pair = { key = 0, value = "" }
+                , key = 0
                 }
                 []
