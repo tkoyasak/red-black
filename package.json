@@ -1,0 +1,27 @@
+{
+  "name": "red-black",
+  "description": "",
+  "repository": "https://github.com/tkoyasak/red-black",
+  "author": "tkoyasak",
+  "license": "MIT",
+  "private": "true",
+  "bugs": "https://github.com/tkoyasak/red-black/issues",
+  "scripts": {
+    "postinstall": "elm-tooling install",
+    "build": "elm make src/Main.elm",
+    "start": "run-p start:*",
+    "start:open": "open-cli http://localhost:8000/src/Main.elm",
+    "start:reactor": "elm reactor",
+    "lint": "npm run elm-format && npm run prettier",
+    "elm-format": "elm-format --yes src/Main.elm",
+    "prettier": "npx prettier -w .github/ package.json",
+    "test": ""
+  },
+  "devDependencies": {
+    "elm-review": "^2.7.6",
+    "elm-tooling": "^1.10.0",
+    "npm-run-all": "^4.1.5",
+    "open-cli": "^7.1.0",
+    "prettier": "^2.7.1"
+  }
+}
