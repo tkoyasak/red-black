@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, button, div, h1, input, li, p, text, ul)
+import Html exposing (Html, button, div, h1, input, p, text)
 import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
 import Svg exposing (Svg, rect, text_)
@@ -25,8 +25,8 @@ main =
 
 
 type alias Model =
-    { form : Form
-    , problems : List Problem
+    { form : String
+    , problem : Maybe String
     , expr : RBT
     }
 
@@ -39,18 +39,10 @@ type alias Key =
     Int
 
 
-type alias Form =
-    String
-
-
-type alias Problem =
-    String
-
-
 init : Model
 init =
     { form = ""
-    , problems = []
+    , problem = Nothing
     , expr = Dict.empty
     }
 
@@ -75,26 +67,26 @@ update msg model =
             case insertOk model of
                 Ok key ->
                     { form = ""
-                    , problems = []
+                    , problem = Nothing
                     , expr = Dict.insert key () model.expr
                     }
 
-                Err problems ->
-                    { model | problems = problems }
+                Err problem ->
+                    { model | problem = Just problem }
 
         RemoveKey ->
             case removeOk model of
                 Ok key ->
                     { form = ""
-                    , problems = []
+                    , problem = Nothing
                     , expr = Dict.remove key model.expr
                     }
 
-                Err problems ->
-                    { model | problems = problems }
+                Err problem ->
+                    { model | problem = Just problem }
 
 
-insertOk : Model -> Result (List Problem) Key
+insertOk : Model -> Result String Key
 insertOk model =
     let
         trimmedForm =
@@ -102,20 +94,20 @@ insertOk model =
     in
     case String.toInt trimmedForm of
         Just x ->
-            if Dict.member x model.expr then
-                Err [ "That's already a member. [" ++ trimmedForm ++ "]" ]
+            if x > 99 || x < 0 then
+                Err "Please input 0-99."
 
-            else if x > 999 || x < 0 then
-                Err [ "Please input 0-999." ]
+            else if Dict.member x model.expr then
+                Err ("That's already a member. [" ++ trimmedForm ++ "]")
 
             else
                 Ok x
 
         Nothing ->
-            Err [ "Unable to convert \"" ++ trimmedForm ++ "\" to Int." ]
+            Err ("Unable to convert \"" ++ trimmedForm ++ "\" to Int.")
 
 
-removeOk : Model -> Result (List Problem) Key
+removeOk : Model -> Result String Key
 removeOk model =
     let
         trimmedForm =
@@ -123,14 +115,17 @@ removeOk model =
     in
     case String.toInt trimmedForm of
         Just x ->
-            if Dict.member x model.expr then
+            if x > 99 || x < 0 then
+                Err "Please input 0-99."
+
+            else if Dict.member x model.expr then
                 Ok x
 
             else
-                Err [ "There is no such member. [" ++ trimmedForm ++ "]" ]
+                Err ("There is no such member. [" ++ trimmedForm ++ "]")
 
         Nothing ->
-            Err [ "Unable to convert \"" ++ trimmedForm ++ "\" to Int." ]
+            Err ("Unable to convert \"" ++ trimmedForm ++ "\" to Int.")
 
 
 
@@ -143,7 +138,7 @@ view model =
         [ class "" ]
         [ h1
             []
-            [ text "visualize-red-black" ]
+            [ text "Visualize Red-Black-Tree" ]
         , button
             [ onClick InsertKey ]
             [ text "Insert" ]
@@ -151,14 +146,19 @@ view model =
             [ onClick RemoveKey ]
             [ text "Remove" ]
         , input
-            [ value model.form, onInput EnteredKey, placeholder "key" ]
+            [ value model.form, onInput EnteredKey, placeholder "Enter a key 0-99" ]
             []
-        , ul []
-            (List.map
-                (\problem ->
-                    li [] [ text problem ]
-                )
-                model.problems
+        , p
+            []
+            ((\problem ->
+                case problem of
+                    Just str ->
+                        [ text str ]
+
+                    Nothing ->
+                        []
+             )
+                model.problem
             )
         , p
             []
@@ -229,12 +229,12 @@ drawLeaf =
     Svg.g
         []
         [ rect
-            [ rx "15"
-            , ry "15"
-            , x "-15"
-            , y "-15"
-            , height "30"
-            , width "30"
+            [ rx "10"
+            , ry "10"
+            , x "-10"
+            , y "-10"
+            , height "20"
+            , width "20"
             , fill "#cccccc"
             ]
             []
