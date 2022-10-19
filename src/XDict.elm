@@ -1,4 +1,4 @@
-module X.Dict exposing
+module XDict exposing
   ( Dict(..), NColor(..)
   , empty, singleton, insert, update, remove
   , isEmpty, member, get, size

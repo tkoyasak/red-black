@@ -1,24 +1,22 @@
-module Pages.Home_ exposing (Model, Msg, page)
+module Main exposing (main)
 
-import Browser.Dom exposing (Error(..))
+import Browser
 import Html exposing (Html, button, div, h1, input, li, p, text, ul)
 import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
-import Page exposing (Page)
 import Svg exposing (Svg, rect, text_)
 import Svg.Attributes exposing (fill, height, rx, ry, stroke, textAnchor, transform, width, x, x1, x2, y, y1, y2)
 import TreeDiagram exposing (Tree, node, topToBottom)
 import TreeDiagram.Svg exposing (draw)
-import View exposing (View)
-import X.Dict as Dict exposing (Dict)
+import XDict as Dict exposing (Dict)
 
 
-page : Page Model Msg
-page =
-    Page.sandbox
+main : Program () Model Msg
+main =
+    Browser.sandbox
         { init = init
-        , update = update
         , view = view
+        , update = update
         }
 
 
@@ -139,38 +137,34 @@ removeOk model =
 -- VIEW
 
 
-view : Model -> View Msg
+view : Model -> Html Msg
 view model =
-    { title = "visualize-red-black"
-    , body =
-        [ div
-            [ class "" ]
-            [ h1
-                []
-                [ text "visualize-red-black" ]
-            , button
-                [ onClick InsertKey ]
-                [ text "Insert" ]
-            , button
-                [ onClick RemoveKey ]
-                [ text "Remove" ]
-            , input
-                [ value model.form, onInput EnteredKey, placeholder "key" ]
-                []
-            , ul []
-                (List.map
-                    (\problem ->
-                        li [] [ text problem ]
-                    )
-                    model.problems
+    div
+        [ class "" ]
+        [ h1
+            []
+            [ text "visualize-red-black" ]
+        , button
+            [ onClick InsertKey ]
+            [ text "Insert" ]
+        , button
+            [ onClick RemoveKey ]
+            [ text "Remove" ]
+        , input
+            [ value model.form, onInput EnteredKey, placeholder "key" ]
+            []
+        , ul []
+            (List.map
+                (\problem ->
+                    li [] [ text problem ]
                 )
-            , p
-                []
-                [ text <| "size : " ++ String.fromInt (Dict.size model.expr) ]
-            , drawRBT model.expr
-            ]
+                model.problems
+            )
+        , p
+            []
+            [ text <| "size : " ++ String.fromInt (Dict.size model.expr) ]
+        , drawRBT model.expr
         ]
-    }
 
 
 drawRBT : RBT -> Html msg
