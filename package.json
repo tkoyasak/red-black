@@ -8,13 +8,13 @@
   "bugs": "https://github.com/tkoyasak/red-black/issues",
   "scripts": {
     "postinstall": "elm-tooling install",
-    "build": "elm make src/Main.elm",
-    "start": "run-p start:*",
-    "start:open": "open-cli http://localhost:8000/src/Main.elm",
+    "build": "elm make --optimize src/Main.elm --output=public/main.js",
+    "start": "npm run build && run-p start:*",
+    "start:open": "open-cli http://localhost:8000/public/index.html",
     "start:reactor": "elm reactor",
     "lint": "npm run elm-format && npm run prettier",
     "elm-format": "elm-format --yes src/Main.elm",
-    "prettier": "npx prettier -w .github/ package.json",
+    "prettier": "npx prettier -w public/ .github/ package.json",
     "test": ""
   },
   "devDependencies": {

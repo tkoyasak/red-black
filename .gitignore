@@ -7,6 +7,9 @@ repl-temp-*
 # Dependency directories
 node_modules
 
+# Output when compiled
+public/main.js
+
 # Desktop Services Store on macOS
 .DS_Store
 
