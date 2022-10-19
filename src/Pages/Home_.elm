@@ -107,6 +107,9 @@ insertOk model =
             if Dict.member x model.expr then
                 Err [ "That's already a member. [" ++ trimmedForm ++ "]" ]
 
+            else if x > 999 || x < 0 then
+                Err [ "Please input 0-999." ]
+
             else
                 Ok x
 
@@ -185,44 +188,62 @@ drawRBT expr =
 
 
 type alias Node =
-    { color : Dict.NColor
-    , key : Key
+    { isLeaf : Bool
+    , color : Dict.NColor
+    , content : String
     }
 
 
 drawNode : Node -> Svg msg
 drawNode node =
-    let
-        content =
-            String.fromInt node.key
+    if node.isLeaf then
+        drawLeaf
 
-        bg =
-            case node.color of
-                Dict.Black ->
-                    "#000000"
+    else
+        let
+            bg =
+                case node.color of
+                    Dict.Red ->
+                        "#ff0000"
 
-                Dict.Red ->
-                    "#ff0000"
-    in
+                    Dict.Black ->
+                        "#000000"
+        in
+        Svg.g
+            []
+            [ rect
+                [ rx "15"
+                , ry "15"
+                , x "-25"
+                , y "-15"
+                , height "30"
+                , width "50"
+                , fill bg
+                ]
+                []
+            , text_
+                [ textAnchor "middle"
+                , transform "translate(0,5)"
+                , fill "#ffffff"
+                ]
+                [ text node.content ]
+            ]
+
+
+drawLeaf : Svg msg
+drawLeaf =
     Svg.g
         []
         [ rect
             [ rx "15"
             , ry "15"
-            , x "-40"
+            , x "-15"
             , y "-15"
             , height "30"
-            , width "80"
-            , stroke "black"
-            , fill bg
+            , width "30"
+            , fill "#cccccc"
             ]
             []
-        , text_
-            [ textAnchor "middle"
-            , transform "translate(0,5)"
-            , fill "#ffffff"
-            ]
-            [ text content ]
         ]
 
 
@@ -243,8 +264,9 @@ visualizeRBT expr =
     case expr of
         Dict.RBNode_elm_builtin color key () lExpr rExpr ->
             node
-                { color = color
-                , key = key
+                { isLeaf = False
+                , color = color
+                , content = String.fromInt key
                 }
                 [ visualizeRBT lExpr
                 , visualizeRBT rExpr
@@ -252,7 +274,8 @@ visualizeRBT expr =
 
         Dict.RBEmpty_elm_builtin ->
             node
-                { color = Dict.Black
-                , key = 0
+                { isLeaf = True
+                , color = Dict.Black
+                , content = ""
                 }
                 []
