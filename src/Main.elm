@@ -26,7 +26,7 @@ main =
 
 type alias Model =
     { form : String
-    , problem : Maybe String
+    , status : Status String
     , expr : RBT
     }
 
@@ -39,10 +39,16 @@ type alias Key =
     Int
 
 
+type Status value
+    = Before
+    | Complete value
+    | Error value
+
+
 init : Model
 init =
     { form = ""
-    , problem = Nothing
+    , status = Before
     , expr = Dict.empty
     }
 
@@ -67,23 +73,23 @@ update msg model =
             case insertOk model of
                 Ok key ->
                     { form = ""
-                    , problem = Nothing
+                    , status = Complete ("Key:" ++ String.fromInt key ++ " was inserted.")
                     , expr = Dict.insert key () model.expr
                     }
 
-                Err problem ->
-                    { model | problem = Just problem }
+                Err error ->
+                    { model | status = Error error }
 
         RemoveKey ->
             case removeOk model of
                 Ok key ->
                     { form = ""
-                    , problem = Nothing
+                    , status = Complete ("Key:" ++ String.fromInt key ++ " was removed.")
                     , expr = Dict.remove key model.expr
                     }
 
-                Err problem ->
-                    { model | problem = Just problem }
+                Err error ->
+                    { model | status = Error error }
 
 
 insertOk : Model -> Result String Key
@@ -98,7 +104,7 @@ insertOk model =
                 Err "Please input 0-99."
 
             else if Dict.member x model.expr then
-                Err ("That's already a member. [" ++ trimmedForm ++ "]")
+                Err ("Key:" ++ String.fromInt x ++ " is already a member.")
 
             else
                 Ok x
@@ -122,7 +128,7 @@ removeOk model =
                 Ok x
 
             else
-                Err ("There is no such member. [" ++ trimmedForm ++ "]")
+                Err ("Key:" ++ String.fromInt x ++ "is not a member.")
 
         Nothing ->
             Err ("Unable to convert \"" ++ trimmedForm ++ "\" to Int.")
@@ -139,26 +145,29 @@ view model =
         [ h1
             []
             [ text "Visualize Red-Black-Tree" ]
+        , input
+            [ value model.form, onInput EnteredKey, placeholder "Key" ]
+            []
         , button
             [ onClick InsertKey ]
-            [ text "Insert" ]
+            [ text "INSERT" ]
         , button
             [ onClick RemoveKey ]
-            [ text "Remove" ]
-        , input
-            [ value model.form, onInput EnteredKey, placeholder "Enter a key 0-99" ]
-            []
+            [ text "REMOVE" ]
         , p
             []
-            ((\problem ->
-                case problem of
-                    Just str ->
-                        [ text str ]
-
-                    Nothing ->
+            ((\status ->
+                case status of
+                    Before ->
                         []
+
+                    Complete value ->
+                        [ text value ]
+
+                    Error value ->
+                        [ text value ]
              )
-                model.problem
+                model.status
             )
         , p
             []
