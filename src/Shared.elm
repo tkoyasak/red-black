@@ -5,7 +5,7 @@ import XDict as Dict exposing (Dict)
 
 type alias Model =
     { form : String
-    , status : Status String
+    , status : Status
     , expr : RBT
     }
 
@@ -18,10 +18,10 @@ type alias Key =
     Int
 
 
-type Status value
+type Status
     = Before
-    | Complete value
-    | Error value
+    | Success String
+    | Error String
 
 
 init : Model

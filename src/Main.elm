@@ -29,7 +29,7 @@ update msg model =
             case insertOk model of
                 Ok key ->
                     { form = ""
-                    , status = Complete ("Key:" ++ String.fromInt key ++ " was inserted.")
+                    , status = Success ("KEY:" ++ String.fromInt key ++ " was inserted.")
                     , expr = Dict.insert key () model.expr
                     }
 
@@ -40,7 +40,7 @@ update msg model =
             case removeOk model of
                 Ok key ->
                     { form = ""
-                    , status = Complete ("Key:" ++ String.fromInt key ++ " was removed.")
+                    , status = Success ("KEY:" ++ String.fromInt key ++ " was removed.")
                     , expr = Dict.remove key model.expr
                     }
 
@@ -60,7 +60,7 @@ insertOk model =
                 Err "Please input 0-99."
 
             else if Dict.member x model.expr then
-                Err ("Key:" ++ String.fromInt x ++ " is already a member.")
+                Err ("KEY:" ++ String.fromInt x ++ " is already a member.")
 
             else
                 Ok x
@@ -84,11 +84,7 @@ removeOk model =
                 Ok x
 
             else
-                Err ("Key:" ++ String.fromInt x ++ "is not a member.")
+                Err ("KEY:" ++ String.fromInt x ++ " is not a member.")
 
         Nothing ->
             Err ("Unable to convert \"" ++ trimmedForm ++ "\" to Int.")
-
-
-
--- VIEW
