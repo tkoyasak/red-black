@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.R.E === region.Y.E)
+	if (region.T.E === region._.E)
 	{
-		return 'on line ' + region.R.E;
+		return 'on line ' + region.T.E;
 	}
-	return 'on lines ' + region.R.E + ' through ' + region.Y.E;
+	return 'on lines ' + region.T.E + ' through ' + region._.E;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aE,
-		impl.aR,
-		impl.aO,
+		impl.aG,
+		impl.aT,
+		impl.aQ,
 		function() { return function() {} }
 	);
 });
@@ -2719,9 +2719,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		q: func(record.q),
-		S: record.S,
-		P: record.P
+		o: func(record.o),
+		U: record.U,
+		R: record.R
 	}
 });
 
@@ -2989,11 +2989,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.q;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.S;
+		var message = !tag ? value : tag < 3 ? value.a : value.o;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.U;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.P) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.R) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,11 +3943,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aE,
-		impl.aR,
-		impl.aO,
+		impl.aG,
+		impl.aT,
+		impl.aQ,
 		function(sendToApp, initialModel) {
-			var view = impl.aS;
+			var view = impl.aU;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3979,12 +3979,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aE,
-		impl.aR,
-		impl.aO,
+		impl.aG,
+		impl.aT,
+		impl.aQ,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.Q && impl.Q(sendToApp)
-			var view = impl.aS;
+			var divertHrefToApp = impl.S && impl.S(sendToApp)
+			var view = impl.aU;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.ax);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.az);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.aQ) && (_VirtualDom_doc.title = title = doc.aQ);
+				(title !== doc.aS) && (_VirtualDom_doc.title = title = doc.aS);
 			});
 		}
 	);
@@ -4053,12 +4053,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aH;
-	var onUrlRequest = impl.aI;
+	var onUrlChange = impl.aJ;
+	var onUrlRequest = impl.aK;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		Q: function(sendToApp)
+		S: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.ak === next.ak
-							&& curr.ab === next.ab
-							&& curr.ah.a === next.ah.a
+							&& curr.am === next.am
+							&& curr.ad === next.ad
+							&& curr.aj.a === next.aj.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		aE: function(flags)
+		aG: function(flags)
 		{
-			return A3(impl.aE, flags, _Browser_getUrl(), key);
+			return A3(impl.aG, flags, _Browser_getUrl(), key);
 		},
-		aS: impl.aS,
-		aR: impl.aR,
-		aO: impl.aO
+		aU: impl.aU,
+		aT: impl.aT,
+		aQ: impl.aQ
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aC: 'hidden', ay: 'visibilitychange' }
+		? { aE: 'hidden', aA: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aC: 'mozHidden', ay: 'mozvisibilitychange' }
+		? { aE: 'mozHidden', aA: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aC: 'msHidden', ay: 'msvisibilitychange' }
+		? { aE: 'msHidden', aA: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aC: 'webkitHidden', ay: 'webkitvisibilitychange' }
-		: { aC: 'hidden', ay: 'visibilitychange' };
+		? { aE: 'webkitHidden', aA: 'webkitvisibilitychange' }
+		: { aE: 'hidden', aA: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		ao: _Browser_getScene(),
-		ar: {
-			at: _Browser_window.pageXOffset,
-			au: _Browser_window.pageYOffset,
-			as: _Browser_doc.documentElement.clientWidth,
-			aa: _Browser_doc.documentElement.clientHeight
+		aq: _Browser_getScene(),
+		at: {
+			av: _Browser_window.pageXOffset,
+			aw: _Browser_window.pageYOffset,
+			au: _Browser_doc.documentElement.clientWidth,
+			ac: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		as: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		aa: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		au: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		ac: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			ao: {
-				as: node.scrollWidth,
-				aa: node.scrollHeight
+			aq: {
+				au: node.scrollWidth,
+				ac: node.scrollHeight
 			},
-			ar: {
-				at: node.scrollLeft,
-				au: node.scrollTop,
-				as: node.clientWidth,
-				aa: node.clientHeight
+			at: {
+				av: node.scrollLeft,
+				aw: node.scrollTop,
+				au: node.clientWidth,
+				ac: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			ao: _Browser_getScene(),
-			ar: {
-				at: x,
-				au: y,
-				as: _Browser_doc.documentElement.clientWidth,
-				aa: _Browser_doc.documentElement.clientHeight
+			aq: _Browser_getScene(),
+			at: {
+				av: x,
+				aw: y,
+				au: _Browser_doc.documentElement.clientWidth,
+				ac: _Browser_doc.documentElement.clientHeight
 			},
-			aA: {
-				at: x + rect.left,
-				au: y + rect.top,
-				as: rect.width,
-				aa: rect.height
+			aC: {
+				av: x + rect.left,
+				aw: y + rect.top,
+				au: rect.width,
+				ac: rect.height
 			}
 		};
 	});
@@ -4370,10 +4370,10 @@ function _Browser_load(url)
 		}
 	}));
 }
-var $elm$core$Maybe$Nothing = {$: 1};
+var $author$project$Shared$Before = {$: 0};
 var $author$project$XDict$RBEmpty_elm_builtin = {$: -2};
 var $author$project$XDict$empty = $author$project$XDict$RBEmpty_elm_builtin;
-var $author$project$Main$init = {j: $author$project$XDict$empty, p: '', x: $elm$core$Maybe$Nothing};
+var $author$project$Shared$init = {z: $author$project$XDict$empty, D: '', L: $author$project$Shared$Before};
 var $elm$core$Basics$EQ = 1;
 var $elm$core$Basics$GT = 2;
 var $elm$core$Basics$LT = 0;
@@ -4480,6 +4480,7 @@ var $elm$core$Basics$add = _Basics_add;
 var $elm$core$Maybe$Just = function (a) {
 	return {$: 0, a: a};
 };
+var $elm$core$Maybe$Nothing = {$: 1};
 var $elm$core$String$all = _String_all;
 var $elm$core$Basics$and = _Basics_and;
 var $elm$core$Basics$append = _Utils_append;
@@ -4877,7 +4878,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {_: fragment, ab: host, af: path, ah: port_, ak: protocol, al: query};
+		return {ab: fragment, ad: host, ah: path, aj: port_, am: protocol, an: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5162,20 +5163,26 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$sandbox = function (impl) {
 	return _Browser_element(
 		{
-			aE: function (_v0) {
-				return _Utils_Tuple2(impl.aE, $elm$core$Platform$Cmd$none);
+			aG: function (_v0) {
+				return _Utils_Tuple2(impl.aG, $elm$core$Platform$Cmd$none);
 			},
-			aO: function (_v1) {
+			aQ: function (_v1) {
 				return $elm$core$Platform$Sub$none;
 			},
-			aR: F2(
+			aT: F2(
 				function (msg, model) {
 					return _Utils_Tuple2(
-						A2(impl.aR, msg, model),
+						A2(impl.aT, msg, model),
 						$elm$core$Platform$Cmd$none);
 				}),
-			aS: impl.aS
+			aU: impl.aU
 		});
+};
+var $author$project$Shared$Error = function (a) {
+	return {$: 2, a: a};
+};
+var $author$project$Shared$Success = function (a) {
+	return {$: 1, a: a};
 };
 var $author$project$XDict$Black = 1;
 var $author$project$XDict$RBNode_elm_builtin = F5(
@@ -5328,11 +5335,12 @@ var $author$project$XDict$member = F2(
 	});
 var $elm$core$String$trim = _String_trim;
 var $author$project$Main$insertOk = function (model) {
-	var trimmedForm = $elm$core$String$trim(model.p);
+	var trimmedForm = $elm$core$String$trim(model.D);
 	var _v0 = $elm$core$String$toInt(trimmedForm);
 	if (!_v0.$) {
 		var x = _v0.a;
-		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.j) ? $elm$core$Result$Err('That\'s already a member. [' + (trimmedForm + ']')) : $elm$core$Result$Ok(x));
+		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.z) ? $elm$core$Result$Err(
+			'KEY:' + ($elm$core$String$fromInt(x) + ' is already a member.')) : $elm$core$Result$Ok(x));
 	} else {
 		return $elm$core$Result$Err('Unable to convert \"' + (trimmedForm + '\" to Int.'));
 	}
@@ -5700,11 +5708,12 @@ var $author$project$XDict$remove = F2(
 		}
 	});
 var $author$project$Main$removeOk = function (model) {
-	var trimmedForm = $elm$core$String$trim(model.p);
+	var trimmedForm = $elm$core$String$trim(model.D);
 	var _v0 = $elm$core$String$toInt(trimmedForm);
 	if (!_v0.$) {
 		var x = _v0.a;
-		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.j) ? $elm$core$Result$Ok(x) : $elm$core$Result$Err('There is no such member. [' + (trimmedForm + ']')));
+		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.z) ? $elm$core$Result$Ok(x) : $elm$core$Result$Err(
+			'KEY:' + ($elm$core$String$fromInt(x) + ' is not a member.')));
 	} else {
 		return $elm$core$Result$Err('Unable to convert \"' + (trimmedForm + '\" to Int.'));
 	}
@@ -5716,22 +5725,23 @@ var $author$project$Main$update = F2(
 				var form = msg.a;
 				return _Utils_update(
 					model,
-					{p: form});
+					{D: form});
 			case 1:
 				var _v1 = $author$project$Main$insertOk(model);
 				if (!_v1.$) {
 					var key = _v1.a;
 					return {
-						j: A3($author$project$XDict$insert, key, 0, model.j),
-						p: '',
-						x: $elm$core$Maybe$Nothing
+						z: A3($author$project$XDict$insert, key, 0, model.z),
+						D: '',
+						L: $author$project$Shared$Success(
+							'KEY:' + ($elm$core$String$fromInt(key) + ' was inserted.'))
 					};
 				} else {
-					var problem = _v1.a;
+					var error = _v1.a;
 					return _Utils_update(
 						model,
 						{
-							x: $elm$core$Maybe$Just(problem)
+							L: $author$project$Shared$Error(error)
 						});
 				}
 			default:
@@ -5739,26 +5749,23 @@ var $author$project$Main$update = F2(
 				if (!_v2.$) {
 					var key = _v2.a;
 					return {
-						j: A2($author$project$XDict$remove, key, model.j),
-						p: '',
-						x: $elm$core$Maybe$Nothing
+						z: A2($author$project$XDict$remove, key, model.z),
+						D: '',
+						L: $author$project$Shared$Success(
+							'KEY:' + ($elm$core$String$fromInt(key) + ' was removed.'))
 					};
 				} else {
-					var problem = _v2.a;
+					var error = _v2.a;
 					return _Utils_update(
 						model,
 						{
-							x: $elm$core$Maybe$Just(problem)
+							L: $author$project$Shared$Error(error)
 						});
 				}
 		}
 	});
-var $author$project$Main$EnteredKey = function (a) {
-	return {$: 0, a: a};
-};
-var $author$project$Main$InsertKey = {$: 1};
-var $author$project$Main$RemoveKey = {$: 2};
-var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$Shared$InsertKey = {$: 1};
+var $author$project$Shared$RemoveKey = {$: 2};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -5769,6 +5776,134 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $author$project$View$errorIcon = A2(
+	$elm$svg$Svg$svg,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Attributes$width('24'),
+			$elm$svg$Svg$Attributes$height('24'),
+			$elm$svg$Svg$Attributes$viewBox('0 0 24 24'),
+			$elm$svg$Svg$Attributes$fill('#df0b37')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$d('m13.047 5.599 6.786 11.586A1.207 1.207 0 0 1 18.786 19H5.214a1.207 1.207 0 0 1-1.047-1.815l6.786-11.586a1.214 1.214 0 0 1 2.094 0Zm-1.165.87a.234.234 0 0 0-.085.085L5.419 17.442a.232.232 0 0 0 .203.35h12.756a.234.234 0 0 0 .203-.35L12.203 6.554a.236.236 0 0 0-.321-.084ZM12 15.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5Zm-.024-6.22c.325 0 .589.261.589.583v4.434a.586.586 0 0 1-.589.583.586.586 0 0 1-.588-.583V9.863c0-.322.264-.583.588-.583Z')
+				]),
+			_List_Nil)
+		]));
+var $author$project$View$successIcon = A2(
+	$elm$svg$Svg$svg,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Attributes$width('24'),
+			$elm$svg$Svg$Attributes$height('24'),
+			$elm$svg$Svg$Attributes$viewBox('0 0 24 24'),
+			$elm$svg$Svg$Attributes$fill('#00875a')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$d('M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 1.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Zm-1.524 10.416 4.971-5.423a.75.75 0 0 1 1.175.927l-.07.087-5.5 6a.75.75 0 0 1-.996.098l-.086-.075-2.5-2.5a.75.75 0 0 1 .976-1.133l.084.073 1.946 1.946 4.971-5.423-4.97 5.423Z')
+				]),
+			_List_Nil)
+		]));
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$View$alert_ = function (status) {
+	var layout = function (data) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('alert ' + data.N)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon')
+						]),
+					_List_fromArray(
+						[data.M])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('content')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(data.t)
+						]))
+				]));
+	};
+	switch (status.$) {
+		case 0:
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('alert')
+					]),
+				_List_Nil);
+		case 1:
+			var value = status.a;
+			return layout(
+				{t: value, M: $author$project$View$successIcon, N: 'success'});
+		default:
+			var value = status.a;
+			return layout(
+				{t: value, M: $author$project$View$errorIcon, N: 'error'});
+	}
+};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$View$button_ = F2(
+	function (msg, value) {
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick(msg)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(value)
+				]));
+	});
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -5791,7 +5926,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawInternal = F6(
 		var v = _v1.a;
 		var rootCoord = _v1.b;
 		var subtrees = _v0.b;
-		var transRootCoord = A3(drawer.T, width, height, rootCoord);
+		var transRootCoord = A3(drawer.V, width, height, rootCoord);
 		var subtreePositions = A2(
 			$elm$core$List$map,
 			function (_v4) {
@@ -5802,10 +5937,10 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawInternal = F6(
 			subtrees);
 		var transSubtreePositions = A2(
 			$elm$core$List$map,
-			A2(drawer.T, width, height),
+			A2(drawer.V, width, height),
 			subtreePositions);
 		var rootDrawing = A2(
-			drawer.O,
+			drawer.Q,
 			transRootCoord,
 			drawNode(v));
 		var _v2 = transRootCoord;
@@ -5823,7 +5958,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawInternal = F6(
 			$elm$core$List$map,
 			function (coord) {
 				return A2(
-					drawer.O,
+					drawer.Q,
 					transRootCoord,
 					drawLine(coord));
 			},
@@ -5957,7 +6092,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawPositioned = F5(
 		var totalHeight = $elm$core$Basics$round(height) + (2 * padding);
 		var totalWidth = $elm$core$Basics$round(width) + (2 * padding);
 		return A3(
-			drawer.W,
+			drawer.Y,
 			totalWidth,
 			totalHeight,
 			A6($alex_tan$elm_tree_diagram$TreeDiagram$drawInternal, totalWidth, totalHeight, drawer, drawNode, drawLine, positionedTree));
@@ -5984,11 +6119,11 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$final = F4(
 			$elm$core$List$map2,
 			F2(
 				function (prelimPos, subtree) {
-					return A4($alex_tan$elm_tree_diagram$TreeDiagram$final, level + 1, levelHeight, lOffset + prelimPos.t, subtree);
+					return A4($alex_tan$elm_tree_diagram$TreeDiagram$final, level + 1, levelHeight, lOffset + prelimPos.r, subtree);
 				}),
 			subtreePrelimPositions,
 			subtrees);
-		var finalPosition = _Utils_Tuple2(lOffset + prelimPosition.s, level * levelHeight);
+		var finalPosition = _Utils_Tuple2(lOffset + prelimPosition.q, level * levelHeight);
 		return A2(
 			$alex_tan$elm_tree_diagram$TreeDiagram$Node,
 			_Utils_Tuple2(v, finalPosition),
@@ -6088,7 +6223,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$ends = function (list) {
 };
 var $alex_tan$elm_tree_diagram$TreeDiagram$rootOffset = F2(
 	function (lPrelimPosition, rPrelimPosition) {
-		return ((((lPrelimPosition.t + rPrelimPosition.t) + lPrelimPosition.s) + rPrelimPosition.s) / 2) | 0;
+		return ((((lPrelimPosition.r + rPrelimPosition.r) + lPrelimPosition.q) + rPrelimPosition.q) / 2) | 0;
 	});
 var $alex_tan$elm_tree_diagram$TreeDiagram$pairwiseSubtreeOffset = F4(
 	function (siblingDistance, subtreeDistance, lContour, rContour) {
@@ -6187,7 +6322,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$prelim = F3(
 							v,
 							_Utils_update(
 								prelimPosition,
-								{t: offset})),
+								{r: offset})),
 						children_);
 				}),
 			subtrees,
@@ -6216,14 +6351,14 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$prelim = F3(
 			var _v9 = _v8.a;
 			var lPrelimPos = _v9.b;
 			var prelimPos = {
-				s: A2($alex_tan$elm_tree_diagram$TreeDiagram$rootOffset, lPrelimPos, rPrelimPos),
-				t: 0
+				q: A2($alex_tan$elm_tree_diagram$TreeDiagram$rootOffset, lPrelimPos, rPrelimPos),
+				r: 0
 			};
-			var rootContour = _Utils_Tuple2(prelimPos.s, prelimPos.s);
+			var rootContour = _Utils_Tuple2(prelimPos.q, prelimPos.q);
 			var treeContour = A2(
 				$elm$core$List$cons,
 				rootContour,
-				A3($alex_tan$elm_tree_diagram$TreeDiagram$buildContour, lSubtreeContour, rSubtreeContour, rPrelimPos.t));
+				A3($alex_tan$elm_tree_diagram$TreeDiagram$buildContour, lSubtreeContour, rSubtreeContour, rPrelimPos.r));
 			return _Utils_Tuple2(
 				A2(
 					$alex_tan$elm_tree_diagram$TreeDiagram$Node,
@@ -6236,7 +6371,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$prelim = F3(
 					$alex_tan$elm_tree_diagram$TreeDiagram$Node,
 					_Utils_Tuple2(
 						val,
-						{s: 0, t: 0}),
+						{q: 0, r: 0}),
 					updatedChildren),
 				_List_fromArray(
 					[
@@ -6291,18 +6426,14 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$position = F5(
 	});
 var $alex_tan$elm_tree_diagram$TreeDiagram$draw_ = F5(
 	function (drawer, layout, drawNode, drawLine, tree) {
-		var positionedTree = A5($alex_tan$elm_tree_diagram$TreeDiagram$position, layout.aN, layout.aP, layout.aF, layout.aK, tree);
-		return A5($alex_tan$elm_tree_diagram$TreeDiagram$drawPositioned, drawer, layout.aL, drawNode, drawLine, positionedTree);
+		var positionedTree = A5($alex_tan$elm_tree_diagram$TreeDiagram$position, layout.aP, layout.aR, layout.aH, layout.aM, tree);
+		return A5($alex_tan$elm_tree_diagram$TreeDiagram$drawPositioned, drawer, layout.aN, drawNode, drawLine, positionedTree);
 	});
 var $alex_tan$elm_tree_diagram$TreeDiagram$Drawable = F3(
 	function (position, compose, transform) {
-		return {W: compose, O: position, T: transform};
+		return {Y: compose, Q: position, V: transform};
 	});
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
-var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $alex_tan$elm_tree_diagram$TreeDiagram$Svg$svgCompose = F3(
 	function (width, height, svgs) {
 		return A2(
@@ -6355,7 +6486,7 @@ var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
 var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$Main$drawEdge = function (_v0) {
+var $author$project$View$drawEdge = function (_v0) {
 	var targetX = _v0.a;
 	var targetY = _v0.b;
 	return A2(
@@ -6372,13 +6503,12 @@ var $author$project$Main$drawEdge = function (_v0) {
 			]),
 		_List_Nil);
 };
-var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$rx = _VirtualDom_attribute('rx');
 var $elm$svg$Svg$Attributes$ry = _VirtualDom_attribute('ry');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $author$project$Main$drawLeaf = A2(
+var $author$project$View$drawLeaf = A2(
 	$elm$svg$Svg$g,
 	_List_Nil,
 	_List_fromArray(
@@ -6397,13 +6527,11 @@ var $author$project$Main$drawLeaf = A2(
 				]),
 			_List_Nil)
 		]));
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$svg$Svg$Attributes$textAnchor = _VirtualDom_attribute('text-anchor');
 var $elm$svg$Svg$text_ = $elm$svg$Svg$trustedNode('text');
-var $author$project$Main$drawNode = function (node) {
-	if (node.L) {
-		return $author$project$Main$drawLeaf;
+var $author$project$View$drawNode = function (node) {
+	if (node.K) {
+		return $author$project$View$drawLeaf;
 	} else {
 		var bg = function () {
 			var _v0 = node.J;
@@ -6441,7 +6569,7 @@ var $author$project$Main$drawNode = function (node) {
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(node.K)
+							$elm$html$Html$text(node.t)
 						]))
 				]));
 	}
@@ -6452,7 +6580,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$node = F2(
 	function (val, children) {
 		return A2($alex_tan$elm_tree_diagram$TreeDiagram$Node, val, children);
 	});
-var $author$project$Main$visualizeRBT = function (expr) {
+var $author$project$View$visualizeRBT = function (expr) {
 	if (!expr.$) {
 		var color = expr.a;
 		var key = expr.b;
@@ -6462,47 +6590,39 @@ var $author$project$Main$visualizeRBT = function (expr) {
 			$alex_tan$elm_tree_diagram$TreeDiagram$node,
 			{
 				J: color,
-				K: $elm$core$String$fromInt(key),
-				L: false
+				t: $elm$core$String$fromInt(key),
+				K: false
 			},
 			_List_fromArray(
 				[
-					$author$project$Main$visualizeRBT(lExpr),
-					$author$project$Main$visualizeRBT(rExpr)
+					$author$project$View$visualizeRBT(lExpr),
+					$author$project$View$visualizeRBT(rExpr)
 				]));
 	} else {
 		return A2(
 			$alex_tan$elm_tree_diagram$TreeDiagram$node,
-			{J: 1, K: '', L: true},
+			{J: 1, t: '', K: true},
 			_List_Nil);
 	}
 };
-var $author$project$Main$drawRBT = function (expr) {
+var $author$project$View$drawRBT = function (expr) {
 	return A4(
 		$alex_tan$elm_tree_diagram$TreeDiagram$Svg$draw,
-		{aF: 40, aK: $alex_tan$elm_tree_diagram$TreeDiagram$topToBottom, aL: 40, aN: 100, aP: 80},
-		$author$project$Main$drawNode,
-		$author$project$Main$drawEdge,
-		$author$project$Main$visualizeRBT(expr));
+		{aH: 40, aM: $alex_tan$elm_tree_diagram$TreeDiagram$topToBottom, aN: 40, aP: 100, aR: 80},
+		$author$project$View$drawNode,
+		$author$project$View$drawEdge,
+		$author$project$View$visualizeRBT(expr));
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+var $author$project$Shared$EnteredKey = function (a) {
 	return {$: 0, a: a};
 };
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Attributes$maxlength = function (n) {
 	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
+		_VirtualDom_attribute,
+		'maxlength',
+		$elm$core$String$fromInt(n));
 };
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -6537,35 +6657,28 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $author$project$XDict$sizeHelp = F2(
-	function (n, dict) {
-		sizeHelp:
-		while (true) {
-			if (dict.$ === -2) {
-				return n;
-			} else {
-				var left = dict.d;
-				var right = dict.e;
-				var $temp$n = A2($author$project$XDict$sizeHelp, n + 1, right),
-					$temp$dict = left;
-				n = $temp$n;
-				dict = $temp$dict;
-				continue sizeHelp;
-			}
-		}
-	});
-var $author$project$XDict$size = function (dict) {
-	return A2($author$project$XDict$sizeHelp, 0, dict);
-};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
-var $author$project$Main$view = function (model) {
+var $author$project$View$input_ = function (form) {
+	return A2(
+		$elm$html$Html$input,
+		_List_fromArray(
+			[
+				$elm$html$Html$Events$onInput($author$project$Shared$EnteredKey),
+				$elm$html$Html$Attributes$value(form),
+				$elm$html$Html$Attributes$type_('number'),
+				$elm$html$Html$Attributes$maxlength(5),
+				$elm$html$Html$Attributes$placeholder('Enter KEY')
+			]),
+		_List_Nil);
+};
+var $author$project$View$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('')
+				$elm$html$Html$Attributes$class('rb')
 			]),
 		_List_fromArray(
 			[
@@ -6574,64 +6687,31 @@ var $author$project$Main$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Visualize Red-Black-Tree')
+						$elm$html$Html$text('VISUALIZE RED-BLACK-TREE')
 					])),
 				A2(
-				$elm$html$Html$button,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$InsertKey)
+						$elm$html$Html$Attributes$class('rb-form')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Insert')
+						$author$project$View$alert_(model.L),
+						$author$project$View$input_(model.D),
+						A2($author$project$View$button_, $author$project$Shared$InsertKey, 'INSERT'),
+						A2($author$project$View$button_, $author$project$Shared$RemoveKey, 'REMOVE')
 					])),
 				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$RemoveKey)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Remove')
-					])),
-				A2(
-				$elm$html$Html$input,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$value(model.p),
-						$elm$html$Html$Events$onInput($author$project$Main$EnteredKey),
-						$elm$html$Html$Attributes$placeholder('Enter a key 0-99')
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				function (problem) {
-					if (!problem.$) {
-						var str = problem.a;
-						return _List_fromArray(
-							[
-								$elm$html$Html$text(str)
-							]);
-					} else {
-						return _List_Nil;
-					}
-				}(model.x)),
-				A2(
-				$elm$html$Html$p,
+				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(
-						'size : ' + $elm$core$String$fromInt(
-							$author$project$XDict$size(model.j)))
-					])),
-				$author$project$Main$drawRBT(model.j)
+						$author$project$View$drawRBT(model.z)
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(
-	{aE: $author$project$Main$init, aR: $author$project$Main$update, aS: $author$project$Main$view});
+	{aG: $author$project$Shared$init, aT: $author$project$Main$update, aU: $author$project$View$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
