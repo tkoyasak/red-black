@@ -5,10 +5,10 @@
 */
 @import url("https://unpkg.com/normalize.css@8.0.1/normalize.css");
 
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Exo+2&display=swap");
 
 :root {
-  font-family: "Open Sans", "Exo 2", sans-serif, Arial;
+  font-family: 'Exo 2', sans-serif, Arial;
 }
 
 .rb {
@@ -36,20 +36,10 @@ h1 {
   margin: 0 auto;
 }
 
-.success {
-  border-color: #00805d;
-}
-
-.error {
-  border-color: #df0b37;
-}
-
 .alert * {
-  height: 43px;
-  line-height: 43px;
+  height: 44px;
+  line-height: 44px;
   margin-right: 3px;
-  position: relative;
-  top: 0;
 }
 
 input,

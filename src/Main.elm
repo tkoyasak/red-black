@@ -66,7 +66,7 @@ insertOk model =
                 Ok x
 
         Nothing ->
-            Err ("Unable to convert \"" ++ trimmedForm ++ "\" to Int.")
+            Err "Unable to convert to Int."
 
 
 removeOk : Model -> Result String Key
@@ -87,4 +87,4 @@ removeOk model =
                 Err ("KEY:" ++ String.fromInt x ++ " is not a member.")
 
         Nothing ->
-            Err ("Unable to convert \"" ++ trimmedForm ++ "\" to Int.")
+            Err "Unable to convert to Int."
