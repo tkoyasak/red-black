@@ -5342,7 +5342,7 @@ var $author$project$Main$insertOk = function (model) {
 		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.z) ? $elm$core$Result$Err(
 			'KEY:' + ($elm$core$String$fromInt(x) + ' is already a member.')) : $elm$core$Result$Ok(x));
 	} else {
-		return $elm$core$Result$Err('Unable to convert \"' + (trimmedForm + '\" to Int.'));
+		return $elm$core$Result$Err('Unable to convert to Int.');
 	}
 };
 var $author$project$XDict$getMin = function (dict) {
@@ -5715,7 +5715,7 @@ var $author$project$Main$removeOk = function (model) {
 		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.z) ? $elm$core$Result$Ok(x) : $elm$core$Result$Err(
 			'KEY:' + ($elm$core$String$fromInt(x) + ' is not a member.')));
 	} else {
-		return $elm$core$Result$Err('Unable to convert \"' + (trimmedForm + '\" to Int.'));
+		return $elm$core$Result$Err('Unable to convert to Int.');
 	}
 };
 var $author$project$Main$update = F2(
