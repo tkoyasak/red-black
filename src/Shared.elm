@@ -1,6 +1,6 @@
 module Shared exposing (..)
 
-import XDict as Dict exposing (Dict)
+import Dict.RBTree as RBDict
 
 
 type alias Model =
@@ -11,7 +11,7 @@ type alias Model =
 
 
 type alias RBT =
-    Dict Key ()
+    RBDict.Dict Key ()
 
 
 type alias Key =
@@ -28,7 +28,7 @@ init : Model
 init =
     { form = ""
     , status = Before
-    , expr = Dict.empty
+    , expr = RBDict.empty
     }
 
 

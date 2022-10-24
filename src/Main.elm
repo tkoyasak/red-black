@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Shared exposing (..)
 import View exposing (view)
-import XDict as Dict
+import Dict.RBTree as RBDict
 
 
 main : Program () Model Msg
@@ -30,7 +30,7 @@ update msg model =
                 Ok key ->
                     { form = ""
                     , status = Success ("KEY:" ++ String.fromInt key ++ " was inserted.")
-                    , expr = Dict.insert key () model.expr
+                    , expr = RBDict.insert key () model.expr
                     }
 
                 Err error ->
@@ -41,7 +41,7 @@ update msg model =
                 Ok key ->
                     { form = ""
                     , status = Success ("KEY:" ++ String.fromInt key ++ " was removed.")
-                    , expr = Dict.remove key model.expr
+                    , expr = RBDict.remove key model.expr
                     }
 
                 Err error ->
@@ -59,7 +59,7 @@ insertOk model =
             if x > 99 || x < 0 then
                 Err "Please input 0-99."
 
-            else if Dict.member x model.expr then
+            else if RBDict.member x model.expr then
                 Err ("KEY:" ++ String.fromInt x ++ " is already a member.")
 
             else
@@ -80,7 +80,7 @@ removeOk model =
             if x > 99 || x < 0 then
                 Err "Please input 0-99."
 
-            else if Dict.member x model.expr then
+            else if RBDict.member x model.expr then
                 Ok x
 
             else

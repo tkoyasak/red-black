@@ -16,7 +16,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 -}
 
-module XDict exposing
+module Dict.RBTree exposing
   ( Dict(..), NColor(..)
   , empty, singleton, insert, update, remove
   , isEmpty, member, get, size

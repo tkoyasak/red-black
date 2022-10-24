@@ -8,7 +8,7 @@ import Svg exposing (Svg, path, rect, svg, text_)
 import Svg.Attributes exposing (d, fill, height, rx, ry, stroke, textAnchor, transform, viewBox, width, x, x1, x2, y, y1, y2)
 import TreeDiagram exposing (Tree, node, topToBottom)
 import TreeDiagram.Svg exposing (draw)
-import XDict as Dict
+import Dict.RBTree as RBDict
 
 
 view : Model -> Html Msg
@@ -130,7 +130,7 @@ drawRBT expr =
 
 type alias Node =
     { isLeaf : Bool
-    , color : Dict.NColor
+    , color : RBDict.NColor
     , content : String
     }
 
@@ -144,10 +144,10 @@ drawNode node =
         let
             bg =
                 case node.color of
-                    Dict.Red ->
+                    RBDict.Red ->
                         "#ff0000"
 
-                    Dict.Black ->
+                    RBDict.Black ->
                         "#000000"
         in
         Svg.g
@@ -203,7 +203,7 @@ drawEdge ( targetX, targetY ) =
 visualizeRBT : RBT -> Tree Node
 visualizeRBT expr =
     case expr of
-        Dict.RBNode_elm_builtin color key () lExpr rExpr ->
+        RBDict.RBNode_elm_builtin color key () lExpr rExpr ->
             node
                 { isLeaf = False
                 , color = color
@@ -213,10 +213,10 @@ visualizeRBT expr =
                 , visualizeRBT rExpr
                 ]
 
-        Dict.RBEmpty_elm_builtin ->
+        RBDict.RBEmpty_elm_builtin ->
             node
                 { isLeaf = True
-                , color = Dict.Black
+                , color = RBDict.Black
                 , content = ""
                 }
                 []
