@@ -1,5 +1,6 @@
 module View exposing (view)
 
+import Dict.RBTree as RBDict
 import Html exposing (Html, button, div, h1, input, text)
 import Html.Attributes exposing (class, maxlength, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
@@ -8,7 +9,6 @@ import Svg exposing (Svg, path, rect, svg, text_)
 import Svg.Attributes exposing (d, fill, height, rx, ry, stroke, textAnchor, transform, viewBox, width, x, x1, x2, y, y1, y2)
 import TreeDiagram exposing (Tree, node, topToBottom)
 import TreeDiagram.Svg exposing (draw)
-import Dict.RBTree as RBDict
 
 
 view : Model -> Html Msg

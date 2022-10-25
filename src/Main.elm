@@ -1,9 +1,9 @@
 module Main exposing (main)
 
 import Browser
+import Dict.RBTree as RBDict
 import Shared exposing (..)
 import View exposing (view)
-import Dict.RBTree as RBDict
 
 
 main : Program () Model Msg
