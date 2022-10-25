@@ -76,8 +76,8 @@ that lets you look up a `String` (such as user names) and find the associated
 
 -}
 type Dict k v
-    = BBNode1 (Dict k v) ( k, v ) (Dict k v)
-    | BBNode2 (Dict k v) ( k, v ) (Dict k v) ( k, v ) (Dict k v)
+    = BBNode2 (Dict k v) ( k, v ) (Dict k v)
+    | BBNode3 (Dict k v) ( k, v ) (Dict k v) ( k, v ) (Dict k v)
     | BBEmpty
 
 
@@ -105,7 +105,7 @@ get targetKey dict =
         BBEmpty ->
             Nothing
 
-        BBNode1 a ( k1, v1 ) b ->
+        BBNode2 a ( k1, v1 ) b ->
             case compare targetKey k1 of
                 LT ->
                     get targetKey a
@@ -116,7 +116,7 @@ get targetKey dict =
                 GT ->
                     get targetKey b
 
-        BBNode2 a ( k1, v1 ) b ( k2, v2 ) c ->
+        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             case compare targetKey k1 of
                 LT ->
                     get targetKey a
@@ -161,10 +161,10 @@ sizeHelp n dict =
         BBEmpty ->
             n
 
-        BBNode1 a _ b ->
+        BBNode2 a _ b ->
             sizeHelp (sizeHelp (n + 1) b) a
 
-        BBNode2 a _ b _ c ->
+        BBNode3 a _ b _ c ->
             sizeHelp (sizeHelp (sizeHelp (n + 2) c) b) a
 
 
@@ -191,7 +191,7 @@ TODO: implement
 -}
 insert : comparable -> v -> Dict comparable v -> Dict comparable v
 insert key value dict =
-   empty
+    empty
 
 
 {-| Remove a key-value pair from a dictionary. If the key is not found,
@@ -214,11 +214,12 @@ update : comparable -> (Maybe v -> Maybe v) -> Dict comparable v -> Dict compara
 update targetKey alter dictionary =
     empty
 
+
 {-| Create a dictionary with one key-value pair.
 -}
 singleton : comparable -> v -> Dict comparable v
 singleton key value =
-    BBNode1 BBEmpty ( key, value ) BBEmpty
+    BBNode2 BBEmpty ( key, value ) BBEmpty
 
 
 
@@ -285,11 +286,11 @@ map func dict =
         BBEmpty ->
             BBEmpty
 
-        BBNode1 a ( k1, v1 ) b ->
-            BBNode1 (map func a) ( k1, func k1 v1 ) (map func b)
+        BBNode2 a ( k1, v1 ) b ->
+            BBNode2 (map func a) ( k1, func k1 v1 ) (map func b)
 
-        BBNode2 a ( k1, v1 ) b ( k2, v2 ) c ->
-            BBNode2 (map func a) ( k1, func k1 v1 ) (map func b) ( k2, func k2 v2 ) (map func c)
+        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+            BBNode3 (map func a) ( k1, func k1 v1 ) (map func b) ( k2, func k2 v2 ) (map func c)
 
 
 {-| Fold over the key-value pairs in a dictionary from lowest key to highest key.
@@ -313,10 +314,10 @@ foldl func acc dict =
         BBEmpty ->
             acc
 
-        BBNode1 a ( k1, v1 ) b ->
+        BBNode2 a ( k1, v1 ) b ->
             foldl func (func k1 v1 (foldl func acc a)) b
 
-        BBNode2 a ( k1, v1 ) b ( k2, v2 ) c ->
+        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             foldl func (func k2 v2 (foldl func (func k1 v1 (foldl func acc a)) b)) c
 
 
@@ -341,10 +342,10 @@ foldr func acc dict =
         BBEmpty ->
             acc
 
-        BBNode1 a ( k1, v1 ) b ->
+        BBNode2 a ( k1, v1 ) b ->
             foldr func (func k1 v1 (foldr func acc b)) a
 
-        BBNode2 a ( k1, v1 ) b ( k2, v2 ) c ->
+        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             foldr func (func k1 v1 (foldr func (func k2 v2 (foldr func acc c)) b)) a
 
 
