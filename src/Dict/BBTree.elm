@@ -125,15 +125,7 @@ get targetKey dict =
                     Just v1
 
                 GT ->
-                    case compare targetKey k2 of
-                        LT ->
-                            get targetKey b
-
-                        EQ ->
-                            Just v2
-
-                        GT ->
-                            get targetKey c
+                    get targetKey (BBNode2 b ( k2, v2 ) c)
 
 
 {-| Determine if a key is in a dictionary.
@@ -185,13 +177,108 @@ isEmpty dict =
 
 {-| Insert a key-value pair into a dictionary. Replaces value when there is
 a collision.
-
-TODO: implement
-
 -}
+type InsertionResult k v
+    = Consumed (Dict k v)
+    | Pushed (Dict k v) ( k, v ) (Dict k v)
+
+
 insert : comparable -> v -> Dict comparable v -> Dict comparable v
-insert key value dict =
-    empty
+insert key val dict =
+    case insertHelp key val dict of
+        Consumed a ->
+            a
+
+        Pushed a ( k1, v1 ) b ->
+            BBNode2 a ( k1, v1 ) b
+
+
+insertHelp : comparable -> v -> Dict comparable v -> InsertionResult comparable v
+insertHelp key val dict =
+    case dict of
+        BBEmpty ->
+            Consumed (singleton key val)
+
+        BBNode2 BBEmpty ( k1, v1 ) BBEmpty ->
+            case compare key k1 of
+                LT ->
+                    Consumed (BBNode3 empty ( key, val ) empty ( k1, v1 ) empty)
+
+                EQ ->
+                    Consumed (BBNode2 empty ( key, val ) empty)
+
+                GT ->
+                    Consumed (BBNode3 empty ( k1, v1 ) empty ( key, val ) empty)
+
+        BBNode3 BBEmpty ( k1, v1 ) BBEmpty ( k2, v2 ) BBEmpty ->
+            case ( compare key k1, compare key k2 ) of
+                ( LT, _ ) ->
+                    Pushed (singleton key val) ( k1, v1 ) (singleton k2 v2)
+
+                ( EQ, _ ) ->
+                    Consumed (BBNode3 empty ( key, val ) empty ( k2, v2 ) empty)
+
+                ( _, LT ) ->
+                    Pushed (singleton k1 v1) ( key, val ) (singleton k2 v2)
+
+                ( _, EQ ) ->
+                    Consumed (BBNode3 empty ( k1, v1 ) empty ( key, val ) empty)
+
+                ( _, GT ) ->
+                    Pushed (singleton k1 v1) ( k2, v2 ) (singleton key val)
+
+        BBNode2 a ( k1, v1 ) b ->
+            case compare key k1 of
+                LT ->
+                    case insertHelp key val a of
+                        Consumed new ->
+                            Consumed (BBNode2 new ( k1, v1 ) b)
+
+                        Pushed la ( k, v ) ra ->
+                            Consumed (BBNode3 la ( k, v ) ra ( k1, v1 ) b)
+
+                EQ ->
+                    Consumed (BBNode2 a ( key, val ) b)
+
+                GT ->
+                    case insertHelp key val b of
+                        Consumed new ->
+                            Consumed (BBNode2 a ( key, val ) new)
+
+                        Pushed lb ( k, v ) rb ->
+                            Consumed (BBNode3 a ( k1, v1 ) lb ( k, v ) rb)
+
+        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+            case ( compare key k1, compare key k2 ) of
+                ( LT, _ ) ->
+                    case insertHelp key val a of
+                        Consumed new ->
+                            Consumed (BBNode3 new ( k1, v1 ) b ( k2, v2 ) c)
+
+                        Pushed la ( k, v ) ra ->
+                            Pushed (BBNode2 la ( k, v ) ra) ( k1, v1 ) (BBNode2 b ( k2, v2 ) c)
+
+                ( EQ, _ ) ->
+                    Consumed (BBNode3 a ( key, val ) b ( k2, v2 ) c)
+
+                ( _, LT ) ->
+                    case insertHelp key val b of
+                        Consumed new ->
+                            Consumed (BBNode3 a ( k1, v1 ) new ( k2, v2 ) c)
+
+                        Pushed lb ( k, v ) rb ->
+                            Pushed (BBNode2 a ( k1, v1 ) lb) ( k, v ) (BBNode2 rb ( k2, v2 ) c)
+
+                ( _, EQ ) ->
+                    Consumed (BBNode3 a ( k1, v1 ) b ( key, val ) c)
+
+                ( _, GT ) ->
+                    case insertHelp key val c of
+                        Consumed new ->
+                            Consumed (BBNode3 a ( k1, v1 ) b ( k2, v2 ) new)
+
+                        Pushed lc ( k, v ) rc ->
+                            Pushed (BBNode2 a ( k1, v1 ) b) ( k2, v2 ) (BBNode2 lc ( k, v ) rc)
 
 
 {-| Remove a key-value pair from a dictionary. If the key is not found,
@@ -218,8 +305,8 @@ update targetKey alter dictionary =
 {-| Create a dictionary with one key-value pair.
 -}
 singleton : comparable -> v -> Dict comparable v
-singleton key value =
-    BBNode2 BBEmpty ( key, value ) BBEmpty
+singleton key val =
+    BBNode2 BBEmpty ( key, val ) BBEmpty
 
 
 
@@ -404,18 +491,18 @@ keys dict =
 -}
 values : Dict k v -> List v
 values dict =
-    foldr (\key value valueList -> value :: valueList) [] dict
+    foldr (\key val valueList -> val :: valueList) [] dict
 
 
 {-| Convert a dictionary into an association list of key-value pairs, sorted by keys.
 -}
 toList : Dict k v -> List ( k, v )
 toList dict =
-    foldr (\key value list -> ( key, value ) :: list) [] dict
+    foldr (\key val list -> ( key, val ) :: list) [] dict
 
 
 {-| Convert an association list into a dictionary.
 -}
 fromList : List ( comparable, v ) -> Dict comparable v
 fromList assocs =
-    List.foldl (\( key, value ) dict -> insert key value dict) empty assocs
+    List.foldl (\( key, val ) dict -> insert key val dict) empty assocs
