@@ -6,7 +6,7 @@ import Dict.RBTree as RBDict
 type alias Model =
     { form : String
     , status : Status
-    , expr : RBT
+    , rbt : RBT
     }
 
 
@@ -28,7 +28,7 @@ init : Model
 init =
     { form = ""
     , status = Before
-    , expr = RBDict.empty
+    , rbt = RBDict.empty
     }
 
 

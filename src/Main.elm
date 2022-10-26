@@ -30,7 +30,7 @@ update msg model =
                 Ok key ->
                     { form = ""
                     , status = Success ("KEY:" ++ String.fromInt key ++ " was inserted.")
-                    , expr = RBDict.insert key () model.expr
+                    , rbt = RBDict.insert key () model.rbt
                     }
 
                 Err error ->
@@ -41,7 +41,7 @@ update msg model =
                 Ok key ->
                     { form = ""
                     , status = Success ("KEY:" ++ String.fromInt key ++ " was removed.")
-                    , expr = RBDict.remove key model.expr
+                    , rbt = RBDict.remove key model.rbt
                     }
 
                 Err error ->
@@ -50,16 +50,12 @@ update msg model =
 
 insertOk : Model -> Result String Key
 insertOk model =
-    let
-        trimmedForm =
-            String.trim model.form
-    in
-    case String.toInt trimmedForm of
+    case String.toInt (String.trim model.form) of
         Just x ->
             if x > 99 || x < 0 then
-                Err "Please input 0-99."
+                Err "Please enter 0-99."
 
-            else if RBDict.member x model.expr then
+            else if RBDict.member x model.rbt then
                 Err ("KEY:" ++ String.fromInt x ++ " is already a member.")
 
             else
@@ -71,16 +67,12 @@ insertOk model =
 
 removeOk : Model -> Result String Key
 removeOk model =
-    let
-        trimmedForm =
-            String.trim model.form
-    in
-    case String.toInt trimmedForm of
+    case String.toInt (String.trim model.form) of
         Just x ->
             if x > 99 || x < 0 then
-                Err "Please input 0-99."
+                Err "Please enter 0-99."
 
-            else if RBDict.member x model.expr then
+            else if RBDict.member x model.rbt then
                 Ok x
 
             else

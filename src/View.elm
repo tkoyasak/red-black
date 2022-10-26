@@ -28,7 +28,7 @@ view model =
             ]
         , div
             []
-            [ drawRBT model.expr
+            [ drawRBT model.rbt
             ]
         ]
 
@@ -115,7 +115,7 @@ errorIcon =
 
 
 drawRBT : RBT -> Html msg
-drawRBT expr =
+drawRBT rbt =
     draw
         { orientation = topToBottom
         , levelHeight = 40
@@ -125,7 +125,7 @@ drawRBT expr =
         }
         drawNode
         drawEdge
-        (visualizeRBT expr)
+        (visualizeRBT rbt)
 
 
 type alias Node =
@@ -201,8 +201,8 @@ drawEdge ( targetX, targetY ) =
 
 
 visualizeRBT : RBT -> Tree Node
-visualizeRBT expr =
-    case expr of
+visualizeRBT rbt =
+    case rbt of
         RBDict.RBNode_elm_builtin color key () lExpr rExpr ->
             node
                 { isLeaf = False
