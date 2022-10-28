@@ -48,7 +48,6 @@ Insert, remove, and query operations all take _O(log n)_ time.
 import Basics exposing (..)
 import List exposing (..)
 import Maybe exposing (..)
-import String exposing (replace)
 
 
 
@@ -179,7 +178,7 @@ isEmpty dict =
 {-| Insert a key-value pair into a dictionary. Replaces value when there is
 a collision.
 -}
-type InsertionResult k v
+type InsertResult k v
     = Consumed (Dict k v)
     | Pushed (Dict k v) ( k, v ) (Dict k v)
 
@@ -194,7 +193,7 @@ insert key val dict =
             BBNode2 a ( k1, v1 ) b
 
 
-insertHelp : comparable -> v -> Dict comparable v -> InsertionResult comparable v
+insertHelp : comparable -> v -> Dict comparable v -> InsertResult comparable v
 insertHelp key val dict =
     case dict of
         BBEmpty ->
@@ -232,54 +231,54 @@ insertHelp key val dict =
             case compare key k1 of
                 LT ->
                     case insertHelp key val a of
-                        Consumed new ->
-                            Consumed (BBNode2 new ( k1, v1 ) b)
+                        Consumed aa ->
+                            Consumed (BBNode2 aa ( k1, v1 ) b)
 
-                        Pushed la ( k, v ) ra ->
-                            Consumed (BBNode3 la ( k, v ) ra ( k1, v1 ) b)
+                        Pushed aa ( ak1, av1 ) ab ->
+                            Consumed (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) b)
 
                 EQ ->
                     Consumed (BBNode2 a ( key, val ) b)
 
                 GT ->
                     case insertHelp key val b of
-                        Consumed new ->
-                            Consumed (BBNode2 a ( k1, v1 ) new)
+                        Consumed ba ->
+                            Consumed (BBNode2 a ( k1, v1 ) ba)
 
-                        Pushed lb ( k, v ) rb ->
-                            Consumed (BBNode3 a ( k1, v1 ) lb ( k, v ) rb)
+                        Pushed ba ( bk1, bv1 ) bb ->
+                            Consumed (BBNode3 a ( k1, v1 ) ba ( bk1, bv1 ) bb)
 
         BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             case ( compare key k1, compare key k2 ) of
                 ( LT, _ ) ->
                     case insertHelp key val a of
-                        Consumed new ->
-                            Consumed (BBNode3 new ( k1, v1 ) b ( k2, v2 ) c)
+                        Consumed aa ->
+                            Consumed (BBNode3 aa ( k1, v1 ) b ( k2, v2 ) c)
 
-                        Pushed la ( k, v ) ra ->
-                            Pushed (BBNode2 la ( k, v ) ra) ( k1, v1 ) (BBNode2 b ( k2, v2 ) c)
+                        Pushed aa ( ak1, av1 ) ab ->
+                            Pushed (BBNode2 aa ( ak1, av1 ) ab) ( k1, v1 ) (BBNode2 b ( k2, v2 ) c)
 
                 ( EQ, _ ) ->
                     Consumed (BBNode3 a ( key, val ) b ( k2, v2 ) c)
 
                 ( _, LT ) ->
                     case insertHelp key val b of
-                        Consumed new ->
-                            Consumed (BBNode3 a ( k1, v1 ) new ( k2, v2 ) c)
+                        Consumed ba ->
+                            Consumed (BBNode3 a ( k1, v1 ) ba ( k2, v2 ) c)
 
-                        Pushed lb ( k, v ) rb ->
-                            Pushed (BBNode2 a ( k1, v1 ) lb) ( k, v ) (BBNode2 rb ( k2, v2 ) c)
+                        Pushed ba ( bk1, bv1 ) bb ->
+                            Pushed (BBNode2 a ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) c)
 
                 ( _, EQ ) ->
                     Consumed (BBNode3 a ( k1, v1 ) b ( key, val ) c)
 
                 ( _, GT ) ->
                     case insertHelp key val c of
-                        Consumed new ->
-                            Consumed (BBNode3 a ( k1, v1 ) b ( k2, v2 ) new)
+                        Consumed ca ->
+                            Consumed (BBNode3 a ( k1, v1 ) b ( k2, v2 ) ca)
 
-                        Pushed lc ( k, v ) rc ->
-                            Pushed (BBNode2 a ( k1, v1 ) b) ( k2, v2 ) (BBNode2 lc ( k, v ) rc)
+                        Pushed ca ( ck1, cv1 ) cb ->
+                            Pushed (BBNode2 a ( k1, v1 ) b) ( k2, v2 ) (BBNode2 ca ( ck1, cv1 ) cb)
 
 
 {-| Remove a key-value pair from a dictionary. If the key is not found,
@@ -288,7 +287,7 @@ no changes are made.
 TODO: implement
 
 -}
-type RemovalResult k v
+type RemoveResult k v
     = Merged (Dict k v)
     | Replaced (Dict k v)
     | NotFoundKey
@@ -307,7 +306,7 @@ remove key dict =
             dict
 
 
-removeHelp : comparable -> Dict comparable v -> RemovalResult comparable v
+removeHelp : comparable -> Dict comparable v -> RemoveResult comparable v
 removeHelp key dict =
     case dict of
         BBEmpty ->
@@ -589,7 +588,7 @@ update key alter dict =
 -}
 singleton : comparable -> v -> Dict comparable v
 singleton key val =
-    BBNode2 BBEmpty ( key, val ) BBEmpty
+    BBNode2 empty ( key, val ) empty
 
 
 
@@ -629,8 +628,6 @@ accumulators for when a given key appears:
 You then traverse all the keys from lowest to highest, building up whatever
 you want.
 
-TODO: implement
-
 -}
 merge :
     (comparable -> a -> result -> result)
@@ -641,7 +638,28 @@ merge :
     -> result
     -> result
 merge leftStep bothStep rightStep leftDict rightDict initialResult =
-    initialResult
+    let
+        stepState : comparable -> b -> ( List ( comparable, a ), result ) -> ( List ( comparable, a ), result )
+        stepState rKey rVal ( list, result ) =
+            case list of
+                [] ->
+                    ( list, rightStep rKey rVal result )
+
+                ( lKey, lVal ) :: rest ->
+                    case compare lKey rKey of
+                        LT ->
+                            stepState rKey rVal ( rest, leftStep lKey lVal result )
+
+                        EQ ->
+                            ( rest, bothStep lKey lVal rVal result )
+
+                        GT ->
+                            ( list, rightStep rKey rVal result )
+
+        ( leftovers, intermediateResult ) =
+            foldl stepState ( toList leftDict, initialResult ) rightDict
+    in
+    List.foldl (\( k, v ) result -> leftStep k v result) intermediateResult leftovers
 
 
 
@@ -724,15 +742,15 @@ foldr func acc dict =
 filter : (comparable -> v -> Bool) -> Dict comparable v -> Dict comparable v
 filter isGood dict =
     let
-        filt : comparable -> v -> Dict comparable v -> Dict comparable v
-        filt k v d =
+        func : comparable -> v -> Dict comparable v -> Dict comparable v
+        func k v d =
             if isGood k v then
                 insert k v d
 
             else
                 d
     in
-    foldl filt empty dict
+    foldl func empty dict
 
 
 {-| Partition a dictionary according to some test. The first dictionary
@@ -742,15 +760,15 @@ the pairs that did not.
 partition : (comparable -> v -> Bool) -> Dict comparable v -> ( Dict comparable v, Dict comparable v )
 partition isGood dict =
     let
-        add : comparable -> v -> ( Dict comparable v, Dict comparable v ) -> ( Dict comparable v, Dict comparable v )
-        add k v ( t1, t2 ) =
+        func : comparable -> v -> ( Dict comparable v, Dict comparable v ) -> ( Dict comparable v, Dict comparable v )
+        func k v ( t1, t2 ) =
             if isGood k v then
                 ( insert k v t1, t2 )
 
             else
                 ( t1, insert k v t2 )
     in
-    foldl add ( empty, empty ) dict
+    foldl func ( empty, empty ) dict
 
 
 
@@ -764,7 +782,7 @@ partition isGood dict =
 -}
 keys : Dict k v -> List k
 keys dict =
-    foldr (\key value keyList -> key :: keyList) [] dict
+    foldr (\key _ list -> key :: list) [] dict
 
 
 {-| Get all of the values in a dictionary, in the order of their keys.
@@ -774,7 +792,7 @@ keys dict =
 -}
 values : Dict k v -> List v
 values dict =
-    foldr (\key val valueList -> val :: valueList) [] dict
+    foldr (\_ val list -> val :: list) [] dict
 
 
 {-| Convert a dictionary into an association list of key-value pairs, sorted by keys.
