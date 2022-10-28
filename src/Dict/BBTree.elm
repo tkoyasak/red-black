@@ -48,6 +48,7 @@ Insert, remove, and query operations all take _O(log n)_ time.
 import Basics exposing (..)
 import List exposing (..)
 import Maybe exposing (..)
+import String exposing (replace)
 
 
 
@@ -243,7 +244,7 @@ insertHelp key val dict =
                 GT ->
                     case insertHelp key val b of
                         Consumed new ->
-                            Consumed (BBNode2 a ( key, val ) new)
+                            Consumed (BBNode2 a ( k1, v1 ) new)
 
                         Pushed lb ( k, v ) rb ->
                             Consumed (BBNode3 a ( k1, v1 ) lb ( k, v ) rb)
@@ -287,19 +288,301 @@ no changes are made.
 TODO: implement
 
 -}
+type RemovalResult k v
+    = Merged (Dict k v)
+    | Replaced (Dict k v)
+    | NotFoundKey
+
+
 remove : comparable -> Dict comparable v -> Dict comparable v
 remove key dict =
-    empty
+    case removeHelp key dict of
+        Merged new ->
+            new
+
+        Replaced new ->
+            new
+
+        NotFoundKey ->
+            dict
+
+
+removeHelp : comparable -> Dict comparable v -> RemovalResult comparable v
+removeHelp key dict =
+    case dict of
+        BBEmpty ->
+            NotFoundKey
+
+        BBNode2 BBEmpty ( k1, _ ) BBEmpty ->
+            case compare key k1 of
+                EQ ->
+                    Merged empty
+
+                _ ->
+                    NotFoundKey
+
+        BBNode3 BBEmpty ( k1, v1 ) BBEmpty ( k2, v2 ) BBEmpty ->
+            case ( compare key k1, compare key k2 ) of
+                ( EQ, _ ) ->
+                    Replaced (singleton k2 v2)
+
+                ( _, EQ ) ->
+                    Replaced (singleton k1 v1)
+
+                _ ->
+                    NotFoundKey
+
+        BBNode2 a ( k1, v1 ) b ->
+            case compare key k1 of
+                LT ->
+                    case removeHelp key a of
+                        NotFoundKey ->
+                            NotFoundKey
+
+                        Merged merged ->
+                            case b of
+                                BBEmpty ->
+                                    NotFoundKey
+
+                                BBNode2 ba ( bk1, bv1 ) bb ->
+                                    Merged (BBNode3 merged ( k1, v1 ) ba ( bk1, bv1 ) bb)
+
+                                BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                    Replaced (BBNode2 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( bk2, bv2 ) bc))
+
+                        Replaced replaced ->
+                            Replaced (BBNode2 replaced ( k1, v1 ) b)
+
+                EQ ->
+                    case findNextLarger key b of
+                        Nothing ->
+                            NotFoundKey
+
+                        Just ( keyNext, valNext ) ->
+                            case removeHelp keyNext b of
+                                NotFoundKey ->
+                                    NotFoundKey
+
+                                Merged merged ->
+                                    case a of
+                                        BBEmpty ->
+                                            NotFoundKey
+
+                                        BBNode2 aa ( ak1, av1 ) ab ->
+                                            Merged (BBNode3 aa ( ak1, av1 ) ab ( keyNext, valNext ) merged)
+
+                                        BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                            Replaced (BBNode2 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( keyNext, valNext ) merged))
+
+                                Replaced replaced ->
+                                    Replaced (BBNode2 a ( keyNext, valNext ) replaced)
+
+                GT ->
+                    case removeHelp key b of
+                        NotFoundKey ->
+                            NotFoundKey
+
+                        Merged merged ->
+                            case a of
+                                BBEmpty ->
+                                    NotFoundKey
+
+                                BBNode2 aa ( ak1, av1 ) ab ->
+                                    Merged (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) merged)
+
+                                BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                    Replaced (BBNode2 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) merged))
+
+                        Replaced replaced ->
+                            Replaced (BBNode2 a ( k1, v1 ) replaced)
+
+        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+            case ( compare key k1, compare key k2 ) of
+                ( LT, _ ) ->
+                    case removeHelp key a of
+                        NotFoundKey ->
+                            NotFoundKey
+
+                        Merged merged ->
+                            case b of
+                                BBEmpty ->
+                                    NotFoundKey
+
+                                BBNode2 ba ( bk1, bv1 ) bb ->
+                                    case c of
+                                        BBEmpty ->
+                                            NotFoundKey
+
+                                        BBNode2 ca ( ck1, cv1 ) cb ->
+                                            Replaced (BBNode2 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode3 bb ( k2, v2 ) ca ( ck1, cv1 ) cb))
+
+                                        BBNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
+                                            Replaced (BBNode3 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) ca) ( ck1, cv1 ) (BBNode2 cb ( ck2, cv2 ) cc))
+
+                                BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                    Replaced (BBNode3 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( bk2, bv2 ) bc) ( k2, v2 ) c)
+
+                        Replaced replaced ->
+                            Replaced (BBNode3 replaced ( k1, v1 ) b ( k2, v2 ) c)
+
+                ( EQ, _ ) ->
+                    case findNextLarger key b of
+                        Nothing ->
+                            NotFoundKey
+
+                        Just ( keyNext, valNext ) ->
+                            case removeHelp keyNext b of
+                                NotFoundKey ->
+                                    NotFoundKey
+
+                                Merged merged ->
+                                    case a of
+                                        BBEmpty ->
+                                            NotFoundKey
+
+                                        BBNode2 aa ( ak1, av1 ) ab ->
+                                            case c of
+                                                BBEmpty ->
+                                                    NotFoundKey
+
+                                                BBNode2 _ _ _ ->
+                                                    Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( keyNext, valNext ) merged) ( k2, v2 ) c)
+
+                                                BBNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
+                                                    Replaced (BBNode3 a ( keyNext, valNext ) (BBNode2 merged ( k2, v2 ) ca) ( ck1, cv1 ) (BBNode2 cb ( ck2, cv2 ) cc))
+
+                                        BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                            Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) merged) ( k2, v2 ) c)
+
+                                Replaced replaced ->
+                                    Replaced (BBNode3 a ( keyNext, valNext ) replaced ( k2, v2 ) c)
+
+                ( _, LT ) ->
+                    case removeHelp key b of
+                        NotFoundKey ->
+                            NotFoundKey
+
+                        Merged merged ->
+                            case a of
+                                BBEmpty ->
+                                    NotFoundKey
+
+                                BBNode2 aa ( ak1, av1 ) ab ->
+                                    case c of
+                                        BBEmpty ->
+                                            NotFoundKey
+
+                                        BBNode2 _ _ _ ->
+                                            Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) merged) ( k2, v2 ) c)
+
+                                        BBNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
+                                            Replaced (BBNode3 a ( k1, v1 ) (BBNode2 merged ( k2, v2 ) ca) ( ck1, cv1 ) (BBNode2 cb ( ck2, cv2 ) cc))
+
+                                BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                    Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) merged) ( k2, v2 ) c)
+
+                        Replaced replaced ->
+                            Replaced (BBNode3 a ( k1, v1 ) replaced ( k2, v2 ) c)
+
+                ( _, EQ ) ->
+                    case findNextLarger key c of
+                        Nothing ->
+                            NotFoundKey
+
+                        Just ( keyNext, valNext ) ->
+                            case removeHelp keyNext c of
+                                NotFoundKey ->
+                                    NotFoundKey
+
+                                Merged merged ->
+                                    case b of
+                                        BBEmpty ->
+                                            NotFoundKey
+
+                                        BBNode2 ba ( bk1, bv1 ) bb ->
+                                            case a of
+                                                BBEmpty ->
+                                                    NotFoundKey
+
+                                                BBNode2 aa ( ak1, av1 ) ab ->
+                                                    Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( keyNext, valNext ) merged))
+
+                                                BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                                    Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( keyNext, valNext ) merged))
+
+                                        BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                            Replaced (BBNode3 a ( k1, v1 ) (BBNode2 ba ( bk1, bv1 ) bb) ( bk2, bv2 ) (BBNode2 bc ( keyNext, valNext ) merged))
+
+                                Replaced replaced ->
+                                    Replaced (BBNode3 a ( k1, v1 ) b ( keyNext, valNext ) replaced)
+
+                ( _, GT ) ->
+                    case removeHelp key c of
+                        NotFoundKey ->
+                            NotFoundKey
+
+                        Merged merged ->
+                            case b of
+                                BBEmpty ->
+                                    NotFoundKey
+
+                                BBNode2 ba ( bk1, bv1 ) bb ->
+                                    case a of
+                                        BBEmpty ->
+                                            NotFoundKey
+
+                                        BBNode2 aa ( ak1, av1 ) ab ->
+                                            Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) merged))
+
+                                        BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                            Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) merged))
+
+                                BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                    Replaced (BBNode3 a ( k1, v1 ) (BBNode2 ba ( bk1, bv1 ) bb) ( bk2, bv2 ) (BBNode2 bc ( k2, v2 ) merged))
+
+                        Replaced replaced ->
+                            Replaced (BBNode3 a ( k1, v1 ) b ( k2, v2 ) replaced)
+
+
+findNextLarger : comparable -> Dict comparable v -> Maybe ( comparable, v )
+findNextLarger key dict =
+    case dict of
+        BBEmpty ->
+            Nothing
+
+        BBNode2 BBEmpty ( k1, v1 ) _ ->
+            case compare key k1 of
+                LT ->
+                    Just ( k1, v1 )
+
+                _ ->
+                    Nothing
+
+        BBNode3 BBEmpty ( k1, v1 ) _ _ _ ->
+            case compare key k1 of
+                LT ->
+                    Just ( k1, v1 )
+
+                _ ->
+                    Nothing
+
+        BBNode2 a _ _ ->
+            findNextLarger key a
+
+        BBNode3 a _ _ _ _ ->
+            findNextLarger key a
 
 
 {-| Update the value of a dictionary for a specific key with a given function.
-
-TODO: implement
-
 -}
 update : comparable -> (Maybe v -> Maybe v) -> Dict comparable v -> Dict comparable v
-update targetKey alter dictionary =
-    empty
+update key alter dict =
+    case alter (get key dict) of
+        Just val ->
+            insert key val dict
+
+        Nothing ->
+            remove key dict
 
 
 {-| Create a dictionary with one key-value pair.
