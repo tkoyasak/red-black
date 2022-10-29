@@ -1,4 +1,4 @@
-module Dict.BBTree exposing
+module Dict.TTTree exposing
     ( Dict(..)
     , empty, singleton, insert, update, remove
     , isEmpty, member, get, size
@@ -76,16 +76,16 @@ that lets you look up a `String` (such as user names) and find the associated
 
 -}
 type Dict k v
-    = BBNode2 (Dict k v) ( k, v ) (Dict k v)
-    | BBNode3 (Dict k v) ( k, v ) (Dict k v) ( k, v ) (Dict k v)
-    | BBEmpty
+    = TTNode2 (Dict k v) ( k, v ) (Dict k v)
+    | TTNode3 (Dict k v) ( k, v ) (Dict k v) ( k, v ) (Dict k v)
+    | TTEmpty
 
 
 {-| Create an empty dictionary.
 -}
 empty : Dict k v
 empty =
-    BBEmpty
+    TTEmpty
 
 
 {-| Get the value associated with a key. If the key is not found, return
@@ -102,10 +102,10 @@ dictionary.
 get : comparable -> Dict comparable v -> Maybe v
 get targetKey dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             Nothing
 
-        BBNode2 a ( k1, v1 ) b ->
+        TTNode2 a ( k1, v1 ) b ->
             case compare targetKey k1 of
                 LT ->
                     get targetKey a
@@ -116,7 +116,7 @@ get targetKey dict =
                 GT ->
                     get targetKey b
 
-        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+        TTNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             case compare targetKey k1 of
                 LT ->
                     get targetKey a
@@ -125,7 +125,7 @@ get targetKey dict =
                     Just v1
 
                 GT ->
-                    get targetKey (BBNode2 b ( k2, v2 ) c)
+                    get targetKey (TTNode2 b ( k2, v2 ) c)
 
 
 {-| Determine if a key is in a dictionary.
@@ -150,13 +150,13 @@ size dict =
 sizeHelp : Int -> Dict k v -> Int
 sizeHelp n dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             n
 
-        BBNode2 a _ b ->
+        TTNode2 a _ b ->
             sizeHelp (sizeHelp (n + 1) b) a
 
-        BBNode3 a _ b _ c ->
+        TTNode3 a _ b _ c ->
             sizeHelp (sizeHelp (sizeHelp (n + 2) c) b) a
 
 
@@ -168,7 +168,7 @@ sizeHelp n dict =
 isEmpty : Dict k v -> Bool
 isEmpty dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             True
 
         _ ->
@@ -190,95 +190,95 @@ insert key val dict =
             a
 
         Pushed a ( k1, v1 ) b ->
-            BBNode2 a ( k1, v1 ) b
+            TTNode2 a ( k1, v1 ) b
 
 
 insertHelp : comparable -> v -> Dict comparable v -> InsertResult comparable v
 insertHelp key val dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             Consumed (singleton key val)
 
-        BBNode2 BBEmpty ( k1, v1 ) BBEmpty ->
+        TTNode2 TTEmpty ( k1, v1 ) TTEmpty ->
             case compare key k1 of
                 LT ->
-                    Consumed (BBNode3 empty ( key, val ) empty ( k1, v1 ) empty)
+                    Consumed (TTNode3 empty ( key, val ) empty ( k1, v1 ) empty)
 
                 EQ ->
-                    Consumed (BBNode2 empty ( key, val ) empty)
+                    Consumed (TTNode2 empty ( key, val ) empty)
 
                 GT ->
-                    Consumed (BBNode3 empty ( k1, v1 ) empty ( key, val ) empty)
+                    Consumed (TTNode3 empty ( k1, v1 ) empty ( key, val ) empty)
 
-        BBNode3 BBEmpty ( k1, v1 ) BBEmpty ( k2, v2 ) BBEmpty ->
+        TTNode3 TTEmpty ( k1, v1 ) TTEmpty ( k2, v2 ) TTEmpty ->
             case ( compare key k1, compare key k2 ) of
                 ( LT, _ ) ->
                     Pushed (singleton key val) ( k1, v1 ) (singleton k2 v2)
 
                 ( EQ, _ ) ->
-                    Consumed (BBNode3 empty ( key, val ) empty ( k2, v2 ) empty)
+                    Consumed (TTNode3 empty ( key, val ) empty ( k2, v2 ) empty)
 
                 ( _, LT ) ->
                     Pushed (singleton k1 v1) ( key, val ) (singleton k2 v2)
 
                 ( _, EQ ) ->
-                    Consumed (BBNode3 empty ( k1, v1 ) empty ( key, val ) empty)
+                    Consumed (TTNode3 empty ( k1, v1 ) empty ( key, val ) empty)
 
                 ( _, GT ) ->
                     Pushed (singleton k1 v1) ( k2, v2 ) (singleton key val)
 
-        BBNode2 a ( k1, v1 ) b ->
+        TTNode2 a ( k1, v1 ) b ->
             case compare key k1 of
                 LT ->
                     case insertHelp key val a of
                         Consumed aa ->
-                            Consumed (BBNode2 aa ( k1, v1 ) b)
+                            Consumed (TTNode2 aa ( k1, v1 ) b)
 
                         Pushed aa ( ak1, av1 ) ab ->
-                            Consumed (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) b)
+                            Consumed (TTNode3 aa ( ak1, av1 ) ab ( k1, v1 ) b)
 
                 EQ ->
-                    Consumed (BBNode2 a ( key, val ) b)
+                    Consumed (TTNode2 a ( key, val ) b)
 
                 GT ->
                     case insertHelp key val b of
                         Consumed ba ->
-                            Consumed (BBNode2 a ( k1, v1 ) ba)
+                            Consumed (TTNode2 a ( k1, v1 ) ba)
 
                         Pushed ba ( bk1, bv1 ) bb ->
-                            Consumed (BBNode3 a ( k1, v1 ) ba ( bk1, bv1 ) bb)
+                            Consumed (TTNode3 a ( k1, v1 ) ba ( bk1, bv1 ) bb)
 
-        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+        TTNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             case ( compare key k1, compare key k2 ) of
                 ( LT, _ ) ->
                     case insertHelp key val a of
                         Consumed aa ->
-                            Consumed (BBNode3 aa ( k1, v1 ) b ( k2, v2 ) c)
+                            Consumed (TTNode3 aa ( k1, v1 ) b ( k2, v2 ) c)
 
                         Pushed aa ( ak1, av1 ) ab ->
-                            Pushed (BBNode2 aa ( ak1, av1 ) ab) ( k1, v1 ) (BBNode2 b ( k2, v2 ) c)
+                            Pushed (TTNode2 aa ( ak1, av1 ) ab) ( k1, v1 ) (TTNode2 b ( k2, v2 ) c)
 
                 ( EQ, _ ) ->
-                    Consumed (BBNode3 a ( key, val ) b ( k2, v2 ) c)
+                    Consumed (TTNode3 a ( key, val ) b ( k2, v2 ) c)
 
                 ( _, LT ) ->
                     case insertHelp key val b of
                         Consumed ba ->
-                            Consumed (BBNode3 a ( k1, v1 ) ba ( k2, v2 ) c)
+                            Consumed (TTNode3 a ( k1, v1 ) ba ( k2, v2 ) c)
 
                         Pushed ba ( bk1, bv1 ) bb ->
-                            Pushed (BBNode2 a ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) c)
+                            Pushed (TTNode2 a ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( k2, v2 ) c)
 
                 ( _, EQ ) ->
-                    Consumed (BBNode3 a ( k1, v1 ) b ( key, val ) c)
+                    Consumed (TTNode3 a ( k1, v1 ) b ( key, val ) c)
 
                 ( _, GT ) ->
                     case insertHelp key val c of
                         Consumed ca ->
-                            Consumed (BBNode3 a ( k1, v1 ) b ( k2, v2 ) ca)
+                            Consumed (TTNode3 a ( k1, v1 ) b ( k2, v2 ) ca)
 
                         Pushed ca ( ck1, cv1 ) cb ->
-                            Pushed (BBNode2 a ( k1, v1 ) b) ( k2, v2 ) (BBNode2 ca ( ck1, cv1 ) cb)
+                            Pushed (TTNode2 a ( k1, v1 ) b) ( k2, v2 ) (TTNode2 ca ( ck1, cv1 ) cb)
 
 
 {-| Remove a key-value pair from a dictionary. If the key is not found,
@@ -309,10 +309,10 @@ remove key dict =
 removeHelp : comparable -> Dict comparable v -> RemoveResult comparable v
 removeHelp key dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             NotFoundKey
 
-        BBNode2 BBEmpty ( k1, _ ) BBEmpty ->
+        TTNode2 TTEmpty ( k1, _ ) TTEmpty ->
             case compare key k1 of
                 EQ ->
                     Merged empty
@@ -320,7 +320,7 @@ removeHelp key dict =
                 _ ->
                     NotFoundKey
 
-        BBNode3 BBEmpty ( k1, v1 ) BBEmpty ( k2, v2 ) BBEmpty ->
+        TTNode3 TTEmpty ( k1, v1 ) TTEmpty ( k2, v2 ) TTEmpty ->
             case ( compare key k1, compare key k2 ) of
                 ( EQ, _ ) ->
                     Replaced (singleton k2 v2)
@@ -331,7 +331,7 @@ removeHelp key dict =
                 _ ->
                     NotFoundKey
 
-        BBNode2 a ( k1, v1 ) b ->
+        TTNode2 a ( k1, v1 ) b ->
             case compare key k1 of
                 LT ->
                     case removeHelp key a of
@@ -340,17 +340,17 @@ removeHelp key dict =
 
                         Merged merged ->
                             case b of
-                                BBEmpty ->
+                                TTEmpty ->
                                     NotFoundKey
 
-                                BBNode2 ba ( bk1, bv1 ) bb ->
-                                    Merged (BBNode3 merged ( k1, v1 ) ba ( bk1, bv1 ) bb)
+                                TTNode2 ba ( bk1, bv1 ) bb ->
+                                    Merged (TTNode3 merged ( k1, v1 ) ba ( bk1, bv1 ) bb)
 
-                                BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
-                                    Replaced (BBNode2 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( bk2, bv2 ) bc))
+                                TTNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                    Replaced (TTNode2 (TTNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( bk2, bv2 ) bc))
 
                         Replaced replaced ->
-                            Replaced (BBNode2 replaced ( k1, v1 ) b)
+                            Replaced (TTNode2 replaced ( k1, v1 ) b)
 
                 EQ ->
                     case findNextLarger key b of
@@ -364,17 +364,17 @@ removeHelp key dict =
 
                                 Merged merged ->
                                     case a of
-                                        BBEmpty ->
+                                        TTEmpty ->
                                             NotFoundKey
 
-                                        BBNode2 aa ( ak1, av1 ) ab ->
-                                            Merged (BBNode3 aa ( ak1, av1 ) ab ( keyNext, valNext ) merged)
+                                        TTNode2 aa ( ak1, av1 ) ab ->
+                                            Merged (TTNode3 aa ( ak1, av1 ) ab ( keyNext, valNext ) merged)
 
-                                        BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
-                                            Replaced (BBNode2 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( keyNext, valNext ) merged))
+                                        TTNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                            Replaced (TTNode2 (TTNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (TTNode2 ac ( keyNext, valNext ) merged))
 
                                 Replaced replaced ->
-                                    Replaced (BBNode2 a ( keyNext, valNext ) replaced)
+                                    Replaced (TTNode2 a ( keyNext, valNext ) replaced)
 
                 GT ->
                     case removeHelp key b of
@@ -383,19 +383,19 @@ removeHelp key dict =
 
                         Merged merged ->
                             case a of
-                                BBEmpty ->
+                                TTEmpty ->
                                     NotFoundKey
 
-                                BBNode2 aa ( ak1, av1 ) ab ->
-                                    Merged (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) merged)
+                                TTNode2 aa ( ak1, av1 ) ab ->
+                                    Merged (TTNode3 aa ( ak1, av1 ) ab ( k1, v1 ) merged)
 
-                                BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
-                                    Replaced (BBNode2 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) merged))
+                                TTNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                    Replaced (TTNode2 (TTNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (TTNode2 ac ( k1, v1 ) merged))
 
                         Replaced replaced ->
-                            Replaced (BBNode2 a ( k1, v1 ) replaced)
+                            Replaced (TTNode2 a ( k1, v1 ) replaced)
 
-        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+        TTNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             case ( compare key k1, compare key k2 ) of
                 ( LT, _ ) ->
                     case removeHelp key a of
@@ -404,25 +404,25 @@ removeHelp key dict =
 
                         Merged merged ->
                             case b of
-                                BBEmpty ->
+                                TTEmpty ->
                                     NotFoundKey
 
-                                BBNode2 ba ( bk1, bv1 ) bb ->
+                                TTNode2 ba ( bk1, bv1 ) bb ->
                                     case c of
-                                        BBEmpty ->
+                                        TTEmpty ->
                                             NotFoundKey
 
-                                        BBNode2 ca ( ck1, cv1 ) cb ->
-                                            Replaced (BBNode2 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode3 bb ( k2, v2 ) ca ( ck1, cv1 ) cb))
+                                        TTNode2 ca ( ck1, cv1 ) cb ->
+                                            Replaced (TTNode2 (TTNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode3 bb ( k2, v2 ) ca ( ck1, cv1 ) cb))
 
-                                        BBNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
-                                            Replaced (BBNode3 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) ca) ( ck1, cv1 ) (BBNode2 cb ( ck2, cv2 ) cc))
+                                        TTNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
+                                            Replaced (TTNode3 (TTNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( k2, v2 ) ca) ( ck1, cv1 ) (TTNode2 cb ( ck2, cv2 ) cc))
 
-                                BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
-                                    Replaced (BBNode3 (BBNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( bk2, bv2 ) bc) ( k2, v2 ) c)
+                                TTNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                    Replaced (TTNode3 (TTNode2 merged ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( bk2, bv2 ) bc) ( k2, v2 ) c)
 
                         Replaced replaced ->
-                            Replaced (BBNode3 replaced ( k1, v1 ) b ( k2, v2 ) c)
+                            Replaced (TTNode3 replaced ( k1, v1 ) b ( k2, v2 ) c)
 
                 ( EQ, _ ) ->
                     case findNextLarger key b of
@@ -436,25 +436,25 @@ removeHelp key dict =
 
                                 Merged merged ->
                                     case a of
-                                        BBEmpty ->
+                                        TTEmpty ->
                                             NotFoundKey
 
-                                        BBNode2 aa ( ak1, av1 ) ab ->
+                                        TTNode2 aa ( ak1, av1 ) ab ->
                                             case c of
-                                                BBEmpty ->
+                                                TTEmpty ->
                                                     NotFoundKey
 
-                                                BBNode2 _ _ _ ->
-                                                    Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( keyNext, valNext ) merged) ( k2, v2 ) c)
+                                                TTNode2 _ _ _ ->
+                                                    Replaced (TTNode2 (TTNode3 aa ( ak1, av1 ) ab ( keyNext, valNext ) merged) ( k2, v2 ) c)
 
-                                                BBNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
-                                                    Replaced (BBNode3 a ( keyNext, valNext ) (BBNode2 merged ( k2, v2 ) ca) ( ck1, cv1 ) (BBNode2 cb ( ck2, cv2 ) cc))
+                                                TTNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
+                                                    Replaced (TTNode3 a ( keyNext, valNext ) (TTNode2 merged ( k2, v2 ) ca) ( ck1, cv1 ) (TTNode2 cb ( ck2, cv2 ) cc))
 
-                                        BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
-                                            Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) merged) ( k2, v2 ) c)
+                                        TTNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                            Replaced (TTNode3 (TTNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (TTNode2 ac ( k1, v1 ) merged) ( k2, v2 ) c)
 
                                 Replaced replaced ->
-                                    Replaced (BBNode3 a ( keyNext, valNext ) replaced ( k2, v2 ) c)
+                                    Replaced (TTNode3 a ( keyNext, valNext ) replaced ( k2, v2 ) c)
 
                 ( _, LT ) ->
                     case removeHelp key b of
@@ -463,25 +463,25 @@ removeHelp key dict =
 
                         Merged merged ->
                             case a of
-                                BBEmpty ->
+                                TTEmpty ->
                                     NotFoundKey
 
-                                BBNode2 aa ( ak1, av1 ) ab ->
+                                TTNode2 aa ( ak1, av1 ) ab ->
                                     case c of
-                                        BBEmpty ->
+                                        TTEmpty ->
                                             NotFoundKey
 
-                                        BBNode2 _ _ _ ->
-                                            Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) merged) ( k2, v2 ) c)
+                                        TTNode2 _ _ _ ->
+                                            Replaced (TTNode2 (TTNode3 aa ( ak1, av1 ) ab ( k1, v1 ) merged) ( k2, v2 ) c)
 
-                                        BBNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
-                                            Replaced (BBNode3 a ( k1, v1 ) (BBNode2 merged ( k2, v2 ) ca) ( ck1, cv1 ) (BBNode2 cb ( ck2, cv2 ) cc))
+                                        TTNode3 ca ( ck1, cv1 ) cb ( ck2, cv2 ) cc ->
+                                            Replaced (TTNode3 a ( k1, v1 ) (TTNode2 merged ( k2, v2 ) ca) ( ck1, cv1 ) (TTNode2 cb ( ck2, cv2 ) cc))
 
-                                BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
-                                    Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) merged) ( k2, v2 ) c)
+                                TTNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                    Replaced (TTNode3 (TTNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (TTNode2 ac ( k1, v1 ) merged) ( k2, v2 ) c)
 
                         Replaced replaced ->
-                            Replaced (BBNode3 a ( k1, v1 ) replaced ( k2, v2 ) c)
+                            Replaced (TTNode3 a ( k1, v1 ) replaced ( k2, v2 ) c)
 
                 ( _, EQ ) ->
                     case findNextLarger key c of
@@ -495,25 +495,25 @@ removeHelp key dict =
 
                                 Merged merged ->
                                     case b of
-                                        BBEmpty ->
+                                        TTEmpty ->
                                             NotFoundKey
 
-                                        BBNode2 ba ( bk1, bv1 ) bb ->
+                                        TTNode2 ba ( bk1, bv1 ) bb ->
                                             case a of
-                                                BBEmpty ->
+                                                TTEmpty ->
                                                     NotFoundKey
 
-                                                BBNode2 aa ( ak1, av1 ) ab ->
-                                                    Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( keyNext, valNext ) merged))
+                                                TTNode2 aa ( ak1, av1 ) ab ->
+                                                    Replaced (TTNode2 (TTNode3 aa ( ak1, av1 ) ab ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( keyNext, valNext ) merged))
 
-                                                BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
-                                                    Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( keyNext, valNext ) merged))
+                                                TTNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                                    Replaced (TTNode3 (TTNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (TTNode2 ac ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( keyNext, valNext ) merged))
 
-                                        BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
-                                            Replaced (BBNode3 a ( k1, v1 ) (BBNode2 ba ( bk1, bv1 ) bb) ( bk2, bv2 ) (BBNode2 bc ( keyNext, valNext ) merged))
+                                        TTNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                            Replaced (TTNode3 a ( k1, v1 ) (TTNode2 ba ( bk1, bv1 ) bb) ( bk2, bv2 ) (TTNode2 bc ( keyNext, valNext ) merged))
 
                                 Replaced replaced ->
-                                    Replaced (BBNode3 a ( k1, v1 ) b ( keyNext, valNext ) replaced)
+                                    Replaced (TTNode3 a ( k1, v1 ) b ( keyNext, valNext ) replaced)
 
                 ( _, GT ) ->
                     case removeHelp key c of
@@ -522,34 +522,34 @@ removeHelp key dict =
 
                         Merged merged ->
                             case b of
-                                BBEmpty ->
+                                TTEmpty ->
                                     NotFoundKey
 
-                                BBNode2 ba ( bk1, bv1 ) bb ->
+                                TTNode2 ba ( bk1, bv1 ) bb ->
                                     case a of
-                                        BBEmpty ->
+                                        TTEmpty ->
                                             NotFoundKey
 
-                                        BBNode2 aa ( ak1, av1 ) ab ->
-                                            Replaced (BBNode2 (BBNode3 aa ( ak1, av1 ) ab ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) merged))
+                                        TTNode2 aa ( ak1, av1 ) ab ->
+                                            Replaced (TTNode2 (TTNode3 aa ( ak1, av1 ) ab ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( k2, v2 ) merged))
 
-                                        BBNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
-                                            Replaced (BBNode3 (BBNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (BBNode2 ac ( k1, v1 ) ba) ( bk1, bv1 ) (BBNode2 bb ( k2, v2 ) merged))
+                                        TTNode3 aa ( ak1, av1 ) ab ( ak2, av2 ) ac ->
+                                            Replaced (TTNode3 (TTNode2 aa ( ak1, av1 ) ab) ( ak2, av2 ) (TTNode2 ac ( k1, v1 ) ba) ( bk1, bv1 ) (TTNode2 bb ( k2, v2 ) merged))
 
-                                BBNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
-                                    Replaced (BBNode3 a ( k1, v1 ) (BBNode2 ba ( bk1, bv1 ) bb) ( bk2, bv2 ) (BBNode2 bc ( k2, v2 ) merged))
+                                TTNode3 ba ( bk1, bv1 ) bb ( bk2, bv2 ) bc ->
+                                    Replaced (TTNode3 a ( k1, v1 ) (TTNode2 ba ( bk1, bv1 ) bb) ( bk2, bv2 ) (TTNode2 bc ( k2, v2 ) merged))
 
                         Replaced replaced ->
-                            Replaced (BBNode3 a ( k1, v1 ) b ( k2, v2 ) replaced)
+                            Replaced (TTNode3 a ( k1, v1 ) b ( k2, v2 ) replaced)
 
 
 findNextLarger : comparable -> Dict comparable v -> Maybe ( comparable, v )
 findNextLarger key dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             Nothing
 
-        BBNode2 BBEmpty ( k1, v1 ) _ ->
+        TTNode2 TTEmpty ( k1, v1 ) _ ->
             case compare key k1 of
                 LT ->
                     Just ( k1, v1 )
@@ -557,7 +557,7 @@ findNextLarger key dict =
                 _ ->
                     Nothing
 
-        BBNode3 BBEmpty ( k1, v1 ) _ _ _ ->
+        TTNode3 TTEmpty ( k1, v1 ) _ _ _ ->
             case compare key k1 of
                 LT ->
                     Just ( k1, v1 )
@@ -565,10 +565,10 @@ findNextLarger key dict =
                 _ ->
                     Nothing
 
-        BBNode2 a _ _ ->
+        TTNode2 a _ _ ->
             findNextLarger key a
 
-        BBNode3 a _ _ _ _ ->
+        TTNode3 a _ _ _ _ ->
             findNextLarger key a
 
 
@@ -588,7 +588,7 @@ update key alter dict =
 -}
 singleton : comparable -> v -> Dict comparable v
 singleton key val =
-    BBNode2 empty ( key, val ) empty
+    TTNode2 empty ( key, val ) empty
 
 
 
@@ -671,14 +671,14 @@ merge leftStep bothStep rightStep leftDict rightDict initialResult =
 map : (k -> a -> b) -> Dict k a -> Dict k b
 map func dict =
     case dict of
-        BBEmpty ->
-            BBEmpty
+        TTEmpty ->
+            TTEmpty
 
-        BBNode2 a ( k1, v1 ) b ->
-            BBNode2 (map func a) ( k1, func k1 v1 ) (map func b)
+        TTNode2 a ( k1, v1 ) b ->
+            TTNode2 (map func a) ( k1, func k1 v1 ) (map func b)
 
-        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
-            BBNode3 (map func a) ( k1, func k1 v1 ) (map func b) ( k2, func k2 v2 ) (map func c)
+        TTNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+            TTNode3 (map func a) ( k1, func k1 v1 ) (map func b) ( k2, func k2 v2 ) (map func c)
 
 
 {-| Fold over the key-value pairs in a dictionary from lowest key to highest key.
@@ -699,13 +699,13 @@ map func dict =
 foldl : (k -> v -> b -> b) -> b -> Dict k v -> b
 foldl func acc dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             acc
 
-        BBNode2 a ( k1, v1 ) b ->
+        TTNode2 a ( k1, v1 ) b ->
             foldl func (func k1 v1 (foldl func acc a)) b
 
-        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+        TTNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             foldl func (func k2 v2 (foldl func (func k1 v1 (foldl func acc a)) b)) c
 
 
@@ -727,13 +727,13 @@ foldl func acc dict =
 foldr : (k -> v -> b -> b) -> b -> Dict k v -> b
 foldr func acc dict =
     case dict of
-        BBEmpty ->
+        TTEmpty ->
             acc
 
-        BBNode2 a ( k1, v1 ) b ->
+        TTNode2 a ( k1, v1 ) b ->
             foldr func (func k1 v1 (foldr func acc b)) a
 
-        BBNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
+        TTNode3 a ( k1, v1 ) b ( k2, v2 ) c ->
             foldr func (func k1 v1 (foldr func (func k2 v2 (foldr func acc c)) b)) a
 
 
