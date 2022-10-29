@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Dict.RBTree as RBDict
+import Dict.TTTree as TTDict
 import Shared exposing (..)
 import View exposing (view)
 
@@ -31,6 +32,7 @@ update msg model =
                     { form = ""
                     , status = Success ("KEY:" ++ String.fromInt key ++ " was inserted.")
                     , rbt = RBDict.insert key () model.rbt
+                    , ttt = TTDict.insert key () model.ttt
                     }
 
                 Err error ->
@@ -42,6 +44,7 @@ update msg model =
                     { form = ""
                     , status = Success ("KEY:" ++ String.fromInt key ++ " was removed.")
                     , rbt = RBDict.remove key model.rbt
+                    , ttt = TTDict.remove key model.ttt
                     }
 
                 Err error ->

@@ -1,17 +1,23 @@
 module Shared exposing (..)
 
 import Dict.RBTree as RBDict
+import Dict.TTTree as TTDict
 
 
 type alias Model =
     { form : String
     , status : Status
     , rbt : RBT
+    , ttt : TTT
     }
 
 
 type alias RBT =
     RBDict.Dict Key ()
+
+
+type alias TTT =
+    TTDict.Dict Key ()
 
 
 type alias Key =
@@ -29,6 +35,7 @@ init =
     { form = ""
     , status = Before
     , rbt = RBDict.empty
+    , ttt = TTDict.empty
     }
 
 

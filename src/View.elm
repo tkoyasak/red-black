@@ -1,11 +1,12 @@
 module View exposing (view)
 
 import Dict.RBTree as RBDict
+import Dict.TTTree as TTDict
 import Html exposing (Html, button, div, h1, input, text)
 import Html.Attributes exposing (class, maxlength, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Shared exposing (..)
-import Svg exposing (Svg, path, rect, svg, text_)
+import Svg exposing (Svg, line, path, rect, svg, text_)
 import Svg.Attributes exposing (d, fill, height, rx, ry, stroke, textAnchor, transform, viewBox, width, x, x1, x2, y, y1, y2)
 import TreeDiagram exposing (Tree, node, topToBottom)
 import TreeDiagram.Svg exposing (draw)
@@ -27,8 +28,9 @@ view model =
             , button_ RemoveKey "REMOVE"
             ]
         , div
-            []
+            [ class "rb-graph" ]
             [ drawRBT model.rbt
+            , drawTTT model.ttt
             ]
         ]
 
@@ -111,34 +113,37 @@ errorIcon =
 
 
 
--- DRAW GRAPH
+-- DRAW Red-Black-Tree GRAPH
 
 
 drawRBT : RBT -> Html msg
 drawRBT rbt =
-    draw
-        { orientation = topToBottom
-        , levelHeight = 40
-        , siblingDistance = 100
-        , subtreeDistance = 80
-        , padding = 40
-        }
-        drawNode
-        drawEdge
-        (visualizeRBT rbt)
+    div
+        [ class "rbt" ]
+        [ draw
+            { orientation = topToBottom
+            , levelHeight = 40
+            , siblingDistance = 100
+            , subtreeDistance = 80
+            , padding = 40
+            }
+            drawRBNode
+            drawRBEdge
+            (visualizeRBT rbt)
+        ]
 
 
-type alias Node =
+type alias RBNode =
     { isLeaf : Bool
     , color : RBDict.NColor
     , content : String
     }
 
 
-drawNode : Node -> Svg msg
-drawNode node =
+drawRBNode : RBNode -> Svg msg
+drawRBNode node =
     if node.isLeaf then
-        drawLeaf
+        drawRBLeaf
 
     else
         let
@@ -171,8 +176,8 @@ drawNode node =
             ]
 
 
-drawLeaf : Svg msg
-drawLeaf =
+drawRBLeaf : Svg msg
+drawRBLeaf =
     Svg.g
         []
         [ rect
@@ -188,8 +193,8 @@ drawLeaf =
         ]
 
 
-drawEdge : ( Float, Float ) -> Svg msg
-drawEdge ( targetX, targetY ) =
+drawRBEdge : ( Float, Float ) -> Svg msg
+drawRBEdge ( targetX, targetY ) =
     Svg.line
         [ x1 "0"
         , y1 "0"
@@ -200,7 +205,7 @@ drawEdge ( targetX, targetY ) =
         []
 
 
-visualizeRBT : RBT -> Tree Node
+visualizeRBT : RBT -> Tree RBNode
 visualizeRBT rbt =
     case rbt of
         RBDict.RBNode_elm_builtin color key () lExpr rExpr ->
@@ -218,5 +223,148 @@ visualizeRBT rbt =
                 { isLeaf = True
                 , color = RBDict.Black
                 , content = ""
+                }
+                []
+
+
+
+-- DRAW Two-Three-Tree GRAPH
+
+
+drawTTT : TTT -> Html msg
+drawTTT ttt =
+    div
+        [ class "ttt" ]
+        [ draw
+            { orientation = topToBottom
+            , levelHeight = 40
+            , siblingDistance = 100
+            , subtreeDistance = 80
+            , padding = 40
+            }
+            drawTTNode
+            drawTTEdge
+            (visualizeTTT ttt)
+        ]
+
+
+type alias TTNode =
+    { isLeaf : Bool
+    , startX : Int
+    , content : List String
+    , textX : List String
+    }
+
+
+drawTTNode : TTNode -> Svg msg
+drawTTNode node =
+    if node.isLeaf then
+        drawTTLeaf
+
+    else
+        let
+            lineBg =
+                if List.length node.content == 2 then
+                    "#ffffff"
+
+                else
+                    "#000000"
+        in
+        Svg.g
+            []
+            (rect
+                [ rx "15"
+                , ry "15"
+                , x <| String.fromInt node.startX
+                , y "-15"
+                , height "30"
+                , width <| String.fromInt (node.startX * -2)
+                , fill "#000000"
+                ]
+                []
+                :: line
+                    [ x1 "0"
+                    , x2 "0"
+                    , y1 "-12"
+                    , y2 "12"
+                    , stroke lineBg
+                    ]
+                    []
+                :: List.map2
+                    (\textX content ->
+                        text_
+                            [ x textX
+                            , textAnchor "middle"
+                            , transform "translate(0,5)"
+                            , fill "#ffffff"
+                            ]
+                            [ text content ]
+                    )
+                    node.textX
+                    node.content
+            )
+
+
+drawTTLeaf : Svg msg
+drawTTLeaf =
+    Svg.g
+        []
+        [ rect
+            [ rx "10"
+            , ry "10"
+            , x "-10"
+            , y "-10"
+            , height "20"
+            , width "20"
+            , fill "#cccccc"
+            ]
+            []
+        ]
+
+
+drawTTEdge : ( Float, Float ) -> Svg msg
+drawTTEdge ( targetX, targetY ) =
+    Svg.line
+        [ x1 "0"
+        , y1 "0"
+        , x2 (String.fromFloat targetX)
+        , y2 (String.fromFloat targetY)
+        , stroke "black"
+        ]
+        []
+
+
+visualizeTTT : TTT -> Tree TTNode
+visualizeTTT ttt =
+    case ttt of
+        TTDict.TTNode2 a ( k1, _ ) b ->
+            node
+                { isLeaf = False
+                , startX = -25
+                , content = [ String.fromInt k1 ]
+                , textX = [ "0" ]
+                }
+                [ visualizeTTT a
+                , visualizeTTT b
+                ]
+
+        TTDict.TTNode3 a ( k1, _ ) b ( k2, _ ) c ->
+            node
+                { isLeaf = False
+                , startX = -50
+                , content = [ String.fromInt k1, String.fromInt k2 ]
+                , textX = [ "-25", "25" ]
+                }
+                [ visualizeTTT a
+                , visualizeTTT b
+                , visualizeTTT c
+                ]
+
+        TTDict.TTEmpty ->
+            node
+                { isLeaf = True
+                , startX = 0
+                , content = []
+                , textX = []
                 }
                 []
