@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.T.E === region._.E)
+	if (region.W.G === region.ac.G)
 	{
-		return 'on line ' + region.T.E;
+		return 'on line ' + region.W.G;
 	}
-	return 'on lines ' + region.T.E + ' through ' + region._.E;
+	return 'on lines ' + region.W.G + ' through ' + region.ac.G;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aG,
-		impl.aT,
-		impl.aQ,
+		impl.aO,
+		impl.aW,
+		impl.aU,
 		function() { return function() {} }
 	);
 });
@@ -2719,9 +2719,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		o: func(record.o),
-		U: record.U,
-		R: record.R
+		q: func(record.q),
+		X: record.X,
+		U: record.U
 	}
 });
 
@@ -2989,11 +2989,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.o;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.U;
+		var message = !tag ? value : tag < 3 ? value.a : value.q;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.X;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.R) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.U) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,11 +3943,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aG,
-		impl.aT,
-		impl.aQ,
+		impl.aO,
+		impl.aW,
+		impl.aU,
 		function(sendToApp, initialModel) {
-			var view = impl.aU;
+			var view = impl.aX;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3979,12 +3979,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aG,
-		impl.aT,
-		impl.aQ,
+		impl.aO,
+		impl.aW,
+		impl.aU,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.S && impl.S(sendToApp)
-			var view = impl.aU;
+			var divertHrefToApp = impl.V && impl.V(sendToApp)
+			var view = impl.aX;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.az);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aH);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.aS) && (_VirtualDom_doc.title = title = doc.aS);
+				(title !== doc.aV) && (_VirtualDom_doc.title = title = doc.aV);
 			});
 		}
 	);
@@ -4053,12 +4053,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aJ;
-	var onUrlRequest = impl.aK;
+	var onUrlChange = impl.aQ;
+	var onUrlRequest = impl.aR;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		S: function(sendToApp)
+		V: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.am === next.am
-							&& curr.ad === next.ad
-							&& curr.aj.a === next.aj.a
+							&& curr.as === next.as
+							&& curr.ag === next.ag
+							&& curr.ap.a === next.ap.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		aG: function(flags)
+		aO: function(flags)
 		{
-			return A3(impl.aG, flags, _Browser_getUrl(), key);
+			return A3(impl.aO, flags, _Browser_getUrl(), key);
 		},
-		aU: impl.aU,
-		aT: impl.aT,
-		aQ: impl.aQ
+		aX: impl.aX,
+		aW: impl.aW,
+		aU: impl.aU
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aE: 'hidden', aA: 'visibilitychange' }
+		? { aM: 'hidden', aI: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aE: 'mozHidden', aA: 'mozvisibilitychange' }
+		? { aM: 'mozHidden', aI: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aE: 'msHidden', aA: 'msvisibilitychange' }
+		? { aM: 'msHidden', aI: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aE: 'webkitHidden', aA: 'webkitvisibilitychange' }
-		: { aE: 'hidden', aA: 'visibilitychange' };
+		? { aM: 'webkitHidden', aI: 'webkitvisibilitychange' }
+		: { aM: 'hidden', aI: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aq: _Browser_getScene(),
-		at: {
-			av: _Browser_window.pageXOffset,
-			aw: _Browser_window.pageYOffset,
-			au: _Browser_doc.documentElement.clientWidth,
-			ac: _Browser_doc.documentElement.clientHeight
+		aw: _Browser_getScene(),
+		aB: {
+			aD: _Browser_window.pageXOffset,
+			aE: _Browser_window.pageYOffset,
+			aC: _Browser_doc.documentElement.clientWidth,
+			af: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		au: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		ac: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		aC: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		af: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aq: {
-				au: node.scrollWidth,
-				ac: node.scrollHeight
+			aw: {
+				aC: node.scrollWidth,
+				af: node.scrollHeight
 			},
-			at: {
-				av: node.scrollLeft,
-				aw: node.scrollTop,
-				au: node.clientWidth,
-				ac: node.clientHeight
+			aB: {
+				aD: node.scrollLeft,
+				aE: node.scrollTop,
+				aC: node.clientWidth,
+				af: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aq: _Browser_getScene(),
-			at: {
-				av: x,
-				aw: y,
-				au: _Browser_doc.documentElement.clientWidth,
-				ac: _Browser_doc.documentElement.clientHeight
+			aw: _Browser_getScene(),
+			aB: {
+				aD: x,
+				aE: y,
+				aC: _Browser_doc.documentElement.clientWidth,
+				af: _Browser_doc.documentElement.clientHeight
 			},
-			aC: {
-				av: x + rect.left,
-				aw: y + rect.top,
-				au: rect.width,
-				ac: rect.height
+			aK: {
+				aD: x + rect.left,
+				aE: y + rect.top,
+				aC: rect.width,
+				af: rect.height
 			}
 		};
 	});
@@ -4371,9 +4371,11 @@ function _Browser_load(url)
 	}));
 }
 var $author$project$Shared$Before = {$: 0};
-var $author$project$XDict$RBEmpty_elm_builtin = {$: -2};
-var $author$project$XDict$empty = $author$project$XDict$RBEmpty_elm_builtin;
-var $author$project$Shared$init = {z: $author$project$XDict$empty, D: '', L: $author$project$Shared$Before};
+var $author$project$Dict$RBTree$RBEmpty_elm_builtin = {$: -2};
+var $author$project$Dict$RBTree$empty = $author$project$Dict$RBTree$RBEmpty_elm_builtin;
+var $author$project$Dict$TTTree$TTEmpty = {$: 2};
+var $author$project$Dict$TTTree$empty = $author$project$Dict$TTTree$TTEmpty;
+var $author$project$Shared$init = {F: '', A: $author$project$Dict$RBTree$empty, N: $author$project$Shared$Before, O: $author$project$Dict$TTTree$empty};
 var $elm$core$Basics$EQ = 1;
 var $elm$core$Basics$GT = 2;
 var $elm$core$Basics$LT = 0;
@@ -4878,7 +4880,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {ab: fragment, ad: host, ah: path, aj: port_, am: protocol, an: query};
+		return {ae: fragment, ag: host, an: path, ap: port_, as: protocol, at: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5163,19 +5165,19 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$sandbox = function (impl) {
 	return _Browser_element(
 		{
-			aG: function (_v0) {
-				return _Utils_Tuple2(impl.aG, $elm$core$Platform$Cmd$none);
+			aO: function (_v0) {
+				return _Utils_Tuple2(impl.aO, $elm$core$Platform$Cmd$none);
 			},
-			aQ: function (_v1) {
+			aU: function (_v1) {
 				return $elm$core$Platform$Sub$none;
 			},
-			aT: F2(
+			aW: F2(
 				function (msg, model) {
 					return _Utils_Tuple2(
-						A2(impl.aT, msg, model),
+						A2(impl.aW, msg, model),
 						$elm$core$Platform$Cmd$none);
 				}),
-			aU: impl.aU
+			aX: impl.aX
 		});
 };
 var $author$project$Shared$Error = function (a) {
@@ -5184,13 +5186,13 @@ var $author$project$Shared$Error = function (a) {
 var $author$project$Shared$Success = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$XDict$Black = 1;
-var $author$project$XDict$RBNode_elm_builtin = F5(
+var $author$project$Dict$RBTree$Black = 1;
+var $author$project$Dict$RBTree$RBNode_elm_builtin = F5(
 	function (a, b, c, d, e) {
 		return {$: 0, a: a, b: b, c: c, d: d, e: e};
 	});
-var $author$project$XDict$Red = 0;
-var $author$project$XDict$balance = F5(
+var $author$project$Dict$RBTree$Red = 0;
+var $author$project$Dict$RBTree$balance = F5(
 	function (color, key, value, left, right) {
 		if ((!right.$) && (!right.a)) {
 			var _v1 = right.a;
@@ -5205,19 +5207,19 @@ var $author$project$XDict$balance = F5(
 				var lLeft = left.d;
 				var lRight = left.e;
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					0,
 					key,
 					value,
-					A5($author$project$XDict$RBNode_elm_builtin, 1, lK, lV, lLeft, lRight),
-					A5($author$project$XDict$RBNode_elm_builtin, 1, rK, rV, rLeft, rRight));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, lK, lV, lLeft, lRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, rK, rV, rLeft, rRight));
 			} else {
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					color,
 					rK,
 					rV,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, key, value, left, rLeft),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, key, value, left, rLeft),
 					rRight);
 			}
 		} else {
@@ -5233,22 +5235,22 @@ var $author$project$XDict$balance = F5(
 				var llRight = _v6.e;
 				var lRight = left.e;
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					0,
 					lK,
 					lV,
-					A5($author$project$XDict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
-					A5($author$project$XDict$RBNode_elm_builtin, 1, key, value, lRight, right));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, key, value, lRight, right));
 			} else {
-				return A5($author$project$XDict$RBNode_elm_builtin, color, key, value, left, right);
+				return A5($author$project$Dict$RBTree$RBNode_elm_builtin, color, key, value, left, right);
 			}
 		}
 	});
 var $elm$core$Basics$compare = _Utils_compare;
-var $author$project$XDict$insertHelp = F3(
+var $author$project$Dict$RBTree$insertHelp = F3(
 	function (key, value, dict) {
 		if (dict.$ === -2) {
-			return A5($author$project$XDict$RBNode_elm_builtin, 0, key, value, $author$project$XDict$RBEmpty_elm_builtin, $author$project$XDict$RBEmpty_elm_builtin);
+			return A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, key, value, $author$project$Dict$RBTree$RBEmpty_elm_builtin, $author$project$Dict$RBTree$RBEmpty_elm_builtin);
 		} else {
 			var nColor = dict.a;
 			var nKey = dict.b;
@@ -5259,41 +5261,435 @@ var $author$project$XDict$insertHelp = F3(
 			switch (_v1) {
 				case 0:
 					return A5(
-						$author$project$XDict$balance,
+						$author$project$Dict$RBTree$balance,
 						nColor,
 						nKey,
 						nValue,
-						A3($author$project$XDict$insertHelp, key, value, nLeft),
+						A3($author$project$Dict$RBTree$insertHelp, key, value, nLeft),
 						nRight);
 				case 1:
-					return A5($author$project$XDict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+					return A5($author$project$Dict$RBTree$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
 				default:
 					return A5(
-						$author$project$XDict$balance,
+						$author$project$Dict$RBTree$balance,
 						nColor,
 						nKey,
 						nValue,
 						nLeft,
-						A3($author$project$XDict$insertHelp, key, value, nRight));
+						A3($author$project$Dict$RBTree$insertHelp, key, value, nRight));
 			}
 		}
 	});
-var $author$project$XDict$insert = F3(
+var $author$project$Dict$RBTree$insert = F3(
 	function (key, value, dict) {
-		var _v0 = A3($author$project$XDict$insertHelp, key, value, dict);
+		var _v0 = A3($author$project$Dict$RBTree$insertHelp, key, value, dict);
 		if ((!_v0.$) && (!_v0.a)) {
 			var _v1 = _v0.a;
 			var k = _v0.b;
 			var v = _v0.c;
 			var l = _v0.d;
 			var r = _v0.e;
-			return A5($author$project$XDict$RBNode_elm_builtin, 1, k, v, l, r);
+			return A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, k, v, l, r);
 		} else {
 			var x = _v0;
 			return x;
 		}
 	});
-var $author$project$XDict$get = F2(
+var $author$project$Dict$TTTree$TTNode2 = F3(
+	function (a, b, c) {
+		return {$: 0, a: a, b: b, c: c};
+	});
+var $author$project$Dict$TTTree$Consumed = function (a) {
+	return {$: 0, a: a};
+};
+var $author$project$Dict$TTTree$Pushed = F3(
+	function (a, b, c) {
+		return {$: 1, a: a, b: b, c: c};
+	});
+var $author$project$Dict$TTTree$TTNode3 = F5(
+	function (a, b, c, d, e) {
+		return {$: 1, a: a, b: b, c: c, d: d, e: e};
+	});
+var $author$project$Dict$TTTree$singleton = F2(
+	function (key, val) {
+		return A3(
+			$author$project$Dict$TTTree$TTNode2,
+			$author$project$Dict$TTTree$empty,
+			_Utils_Tuple2(key, val),
+			$author$project$Dict$TTTree$empty);
+	});
+var $author$project$Dict$TTTree$insertHelp = F3(
+	function (key, val, dict) {
+		switch (dict.$) {
+			case 2:
+				return $author$project$Dict$TTTree$Consumed(
+					A2($author$project$Dict$TTTree$singleton, key, val));
+			case 0:
+				if ((dict.a.$ === 2) && (dict.c.$ === 2)) {
+					var _v1 = dict.a;
+					var _v2 = dict.b;
+					var k1 = _v2.a;
+					var v1 = _v2.b;
+					var _v3 = dict.c;
+					var _v4 = A2($elm$core$Basics$compare, key, k1);
+					switch (_v4) {
+						case 0:
+							return $author$project$Dict$TTTree$Consumed(
+								A5(
+									$author$project$Dict$TTTree$TTNode3,
+									$author$project$Dict$TTTree$empty,
+									_Utils_Tuple2(key, val),
+									$author$project$Dict$TTTree$empty,
+									_Utils_Tuple2(k1, v1),
+									$author$project$Dict$TTTree$empty));
+						case 1:
+							return $author$project$Dict$TTTree$Consumed(
+								A3(
+									$author$project$Dict$TTTree$TTNode2,
+									$author$project$Dict$TTTree$empty,
+									_Utils_Tuple2(key, val),
+									$author$project$Dict$TTTree$empty));
+						default:
+							return $author$project$Dict$TTTree$Consumed(
+								A5(
+									$author$project$Dict$TTTree$TTNode3,
+									$author$project$Dict$TTTree$empty,
+									_Utils_Tuple2(k1, v1),
+									$author$project$Dict$TTTree$empty,
+									_Utils_Tuple2(key, val),
+									$author$project$Dict$TTTree$empty));
+					}
+				} else {
+					var a = dict.a;
+					var _v16 = dict.b;
+					var k1 = _v16.a;
+					var v1 = _v16.b;
+					var b = dict.c;
+					var _v17 = A2($elm$core$Basics$compare, key, k1);
+					switch (_v17) {
+						case 0:
+							var _v18 = A3($author$project$Dict$TTTree$insertHelp, key, val, a);
+							if (!_v18.$) {
+								var aa = _v18.a;
+								return $author$project$Dict$TTTree$Consumed(
+									A3(
+										$author$project$Dict$TTTree$TTNode2,
+										aa,
+										_Utils_Tuple2(k1, v1),
+										b));
+							} else {
+								var aa = _v18.a;
+								var _v19 = _v18.b;
+								var ak1 = _v19.a;
+								var av1 = _v19.b;
+								var ab = _v18.c;
+								return $author$project$Dict$TTTree$Consumed(
+									A5(
+										$author$project$Dict$TTTree$TTNode3,
+										aa,
+										_Utils_Tuple2(ak1, av1),
+										ab,
+										_Utils_Tuple2(k1, v1),
+										b));
+							}
+						case 1:
+							return $author$project$Dict$TTTree$Consumed(
+								A3(
+									$author$project$Dict$TTTree$TTNode2,
+									a,
+									_Utils_Tuple2(key, val),
+									b));
+						default:
+							var _v20 = A3($author$project$Dict$TTTree$insertHelp, key, val, b);
+							if (!_v20.$) {
+								var ba = _v20.a;
+								return $author$project$Dict$TTTree$Consumed(
+									A3(
+										$author$project$Dict$TTTree$TTNode2,
+										a,
+										_Utils_Tuple2(k1, v1),
+										ba));
+							} else {
+								var ba = _v20.a;
+								var _v21 = _v20.b;
+								var bk1 = _v21.a;
+								var bv1 = _v21.b;
+								var bb = _v20.c;
+								return $author$project$Dict$TTTree$Consumed(
+									A5(
+										$author$project$Dict$TTTree$TTNode3,
+										a,
+										_Utils_Tuple2(k1, v1),
+										ba,
+										_Utils_Tuple2(bk1, bv1),
+										bb));
+							}
+					}
+				}
+			default:
+				if (((dict.a.$ === 2) && (dict.c.$ === 2)) && (dict.e.$ === 2)) {
+					var _v5 = dict.a;
+					var _v6 = dict.b;
+					var k1 = _v6.a;
+					var v1 = _v6.b;
+					var _v7 = dict.c;
+					var _v8 = dict.d;
+					var k2 = _v8.a;
+					var v2 = _v8.b;
+					var _v9 = dict.e;
+					var _v10 = _Utils_Tuple2(
+						A2($elm$core$Basics$compare, key, k1),
+						A2($elm$core$Basics$compare, key, k2));
+					_v10$0:
+					while (true) {
+						_v10$1:
+						while (true) {
+							switch (_v10.b) {
+								case 0:
+									switch (_v10.a) {
+										case 0:
+											break _v10$0;
+										case 1:
+											break _v10$1;
+										default:
+											var _v13 = _v10.b;
+											return A3(
+												$author$project$Dict$TTTree$Pushed,
+												A2($author$project$Dict$TTTree$singleton, k1, v1),
+												_Utils_Tuple2(key, val),
+												A2($author$project$Dict$TTTree$singleton, k2, v2));
+									}
+								case 1:
+									switch (_v10.a) {
+										case 0:
+											break _v10$0;
+										case 1:
+											break _v10$1;
+										default:
+											var _v14 = _v10.b;
+											return $author$project$Dict$TTTree$Consumed(
+												A5(
+													$author$project$Dict$TTTree$TTNode3,
+													$author$project$Dict$TTTree$empty,
+													_Utils_Tuple2(k1, v1),
+													$author$project$Dict$TTTree$empty,
+													_Utils_Tuple2(key, val),
+													$author$project$Dict$TTTree$empty));
+									}
+								default:
+									switch (_v10.a) {
+										case 0:
+											break _v10$0;
+										case 1:
+											break _v10$1;
+										default:
+											var _v15 = _v10.b;
+											return A3(
+												$author$project$Dict$TTTree$Pushed,
+												A2($author$project$Dict$TTTree$singleton, k1, v1),
+												_Utils_Tuple2(k2, v2),
+												A2($author$project$Dict$TTTree$singleton, key, val));
+									}
+							}
+						}
+						var _v12 = _v10.a;
+						return $author$project$Dict$TTTree$Consumed(
+							A5(
+								$author$project$Dict$TTTree$TTNode3,
+								$author$project$Dict$TTTree$empty,
+								_Utils_Tuple2(key, val),
+								$author$project$Dict$TTTree$empty,
+								_Utils_Tuple2(k2, v2),
+								$author$project$Dict$TTTree$empty));
+					}
+					var _v11 = _v10.a;
+					return A3(
+						$author$project$Dict$TTTree$Pushed,
+						A2($author$project$Dict$TTTree$singleton, key, val),
+						_Utils_Tuple2(k1, v1),
+						A2($author$project$Dict$TTTree$singleton, k2, v2));
+				} else {
+					var a = dict.a;
+					var _v22 = dict.b;
+					var k1 = _v22.a;
+					var v1 = _v22.b;
+					var b = dict.c;
+					var _v23 = dict.d;
+					var k2 = _v23.a;
+					var v2 = _v23.b;
+					var c = dict.e;
+					var _v24 = _Utils_Tuple2(
+						A2($elm$core$Basics$compare, key, k1),
+						A2($elm$core$Basics$compare, key, k2));
+					_v24$0:
+					while (true) {
+						_v24$1:
+						while (true) {
+							switch (_v24.b) {
+								case 0:
+									switch (_v24.a) {
+										case 0:
+											break _v24$0;
+										case 1:
+											break _v24$1;
+										default:
+											var _v29 = _v24.b;
+											var _v30 = A3($author$project$Dict$TTTree$insertHelp, key, val, b);
+											if (!_v30.$) {
+												var ba = _v30.a;
+												return $author$project$Dict$TTTree$Consumed(
+													A5(
+														$author$project$Dict$TTTree$TTNode3,
+														a,
+														_Utils_Tuple2(k1, v1),
+														ba,
+														_Utils_Tuple2(k2, v2),
+														c));
+											} else {
+												var ba = _v30.a;
+												var _v31 = _v30.b;
+												var bk1 = _v31.a;
+												var bv1 = _v31.b;
+												var bb = _v30.c;
+												return A3(
+													$author$project$Dict$TTTree$Pushed,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														a,
+														_Utils_Tuple2(k1, v1),
+														ba),
+													_Utils_Tuple2(bk1, bv1),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														bb,
+														_Utils_Tuple2(k2, v2),
+														c));
+											}
+									}
+								case 1:
+									switch (_v24.a) {
+										case 0:
+											break _v24$0;
+										case 1:
+											break _v24$1;
+										default:
+											var _v32 = _v24.b;
+											return $author$project$Dict$TTTree$Consumed(
+												A5(
+													$author$project$Dict$TTTree$TTNode3,
+													a,
+													_Utils_Tuple2(k1, v1),
+													b,
+													_Utils_Tuple2(key, val),
+													c));
+									}
+								default:
+									switch (_v24.a) {
+										case 0:
+											break _v24$0;
+										case 1:
+											break _v24$1;
+										default:
+											var _v33 = _v24.b;
+											var _v34 = A3($author$project$Dict$TTTree$insertHelp, key, val, c);
+											if (!_v34.$) {
+												var ca = _v34.a;
+												return $author$project$Dict$TTTree$Consumed(
+													A5(
+														$author$project$Dict$TTTree$TTNode3,
+														a,
+														_Utils_Tuple2(k1, v1),
+														b,
+														_Utils_Tuple2(k2, v2),
+														ca));
+											} else {
+												var ca = _v34.a;
+												var _v35 = _v34.b;
+												var ck1 = _v35.a;
+												var cv1 = _v35.b;
+												var cb = _v34.c;
+												return A3(
+													$author$project$Dict$TTTree$Pushed,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														a,
+														_Utils_Tuple2(k1, v1),
+														b),
+													_Utils_Tuple2(k2, v2),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														ca,
+														_Utils_Tuple2(ck1, cv1),
+														cb));
+											}
+									}
+							}
+						}
+						var _v28 = _v24.a;
+						return $author$project$Dict$TTTree$Consumed(
+							A5(
+								$author$project$Dict$TTTree$TTNode3,
+								a,
+								_Utils_Tuple2(key, val),
+								b,
+								_Utils_Tuple2(k2, v2),
+								c));
+					}
+					var _v25 = _v24.a;
+					var _v26 = A3($author$project$Dict$TTTree$insertHelp, key, val, a);
+					if (!_v26.$) {
+						var aa = _v26.a;
+						return $author$project$Dict$TTTree$Consumed(
+							A5(
+								$author$project$Dict$TTTree$TTNode3,
+								aa,
+								_Utils_Tuple2(k1, v1),
+								b,
+								_Utils_Tuple2(k2, v2),
+								c));
+					} else {
+						var aa = _v26.a;
+						var _v27 = _v26.b;
+						var ak1 = _v27.a;
+						var av1 = _v27.b;
+						var ab = _v26.c;
+						return A3(
+							$author$project$Dict$TTTree$Pushed,
+							A3(
+								$author$project$Dict$TTTree$TTNode2,
+								aa,
+								_Utils_Tuple2(ak1, av1),
+								ab),
+							_Utils_Tuple2(k1, v1),
+							A3(
+								$author$project$Dict$TTTree$TTNode2,
+								b,
+								_Utils_Tuple2(k2, v2),
+								c));
+					}
+				}
+		}
+	});
+var $author$project$Dict$TTTree$insert = F3(
+	function (key, val, dict) {
+		var _v0 = A3($author$project$Dict$TTTree$insertHelp, key, val, dict);
+		if (!_v0.$) {
+			var a = _v0.a;
+			return a;
+		} else {
+			var a = _v0.a;
+			var _v1 = _v0.b;
+			var k1 = _v1.a;
+			var v1 = _v1.b;
+			var b = _v0.c;
+			return A3(
+				$author$project$Dict$TTTree$TTNode2,
+				a,
+				_Utils_Tuple2(k1, v1),
+				b);
+		}
+	});
+var $author$project$Dict$RBTree$get = F2(
 	function (targetKey, dict) {
 		get:
 		while (true) {
@@ -5324,9 +5720,9 @@ var $author$project$XDict$get = F2(
 			}
 		}
 	});
-var $author$project$XDict$member = F2(
+var $author$project$Dict$RBTree$member = F2(
 	function (key, dict) {
-		var _v0 = A2($author$project$XDict$get, key, dict);
+		var _v0 = A2($author$project$Dict$RBTree$get, key, dict);
 		if (!_v0.$) {
 			return true;
 		} else {
@@ -5335,17 +5731,17 @@ var $author$project$XDict$member = F2(
 	});
 var $elm$core$String$trim = _String_trim;
 var $author$project$Main$insertOk = function (model) {
-	var trimmedForm = $elm$core$String$trim(model.D);
-	var _v0 = $elm$core$String$toInt(trimmedForm);
+	var _v0 = $elm$core$String$toInt(
+		$elm$core$String$trim(model.F));
 	if (!_v0.$) {
 		var x = _v0.a;
-		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.z) ? $elm$core$Result$Err(
+		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please enter 0-99.') : (A2($author$project$Dict$RBTree$member, x, model.A) ? $elm$core$Result$Err(
 			'KEY:' + ($elm$core$String$fromInt(x) + ' is already a member.')) : $elm$core$Result$Ok(x));
 	} else {
 		return $elm$core$Result$Err('Unable to convert to Int.');
 	}
 };
-var $author$project$XDict$getMin = function (dict) {
+var $author$project$Dict$RBTree$getMin = function (dict) {
 	getMin:
 	while (true) {
 		if ((!dict.$) && (!dict.d.$)) {
@@ -5358,7 +5754,7 @@ var $author$project$XDict$getMin = function (dict) {
 		}
 	}
 };
-var $author$project$XDict$moveRedLeft = function (dict) {
+var $author$project$Dict$RBTree$moveRedLeft = function (dict) {
 	if (((!dict.$) && (!dict.d.$)) && (!dict.e.$)) {
 		if ((!dict.e.d.$) && (!dict.e.d.a)) {
 			var clr = dict.a;
@@ -5382,18 +5778,18 @@ var $author$project$XDict$moveRedLeft = function (dict) {
 			var rlR = rLeft.e;
 			var rRight = _v2.e;
 			return A5(
-				$author$project$XDict$RBNode_elm_builtin,
+				$author$project$Dict$RBTree$RBNode_elm_builtin,
 				0,
 				rlK,
 				rlV,
 				A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					1,
 					k,
 					v,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
 					rlL),
-				A5($author$project$XDict$RBNode_elm_builtin, 1, rK, rV, rlR, rRight));
+				A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, rK, rV, rlR, rRight));
 		} else {
 			var clr = dict.a;
 			var k = dict.b;
@@ -5412,27 +5808,27 @@ var $author$project$XDict$moveRedLeft = function (dict) {
 			var rRight = _v5.e;
 			if (clr === 1) {
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					1,
 					k,
 					v,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($author$project$XDict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
 			} else {
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					1,
 					k,
 					v,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($author$project$XDict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
 			}
 		}
 	} else {
 		return dict;
 	}
 };
-var $author$project$XDict$moveRedRight = function (dict) {
+var $author$project$Dict$RBTree$moveRedRight = function (dict) {
 	if (((!dict.$) && (!dict.d.$)) && (!dict.e.$)) {
 		if ((!dict.d.d.$) && (!dict.d.d.a)) {
 			var clr = dict.a;
@@ -5456,18 +5852,18 @@ var $author$project$XDict$moveRedRight = function (dict) {
 			var rLeft = _v4.d;
 			var rRight = _v4.e;
 			return A5(
-				$author$project$XDict$RBNode_elm_builtin,
+				$author$project$Dict$RBTree$RBNode_elm_builtin,
 				0,
 				lK,
 				lV,
-				A5($author$project$XDict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
+				A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
 				A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					1,
 					k,
 					v,
 					lRight,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight)));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight)));
 		} else {
 			var clr = dict.a;
 			var k = dict.b;
@@ -5486,27 +5882,27 @@ var $author$project$XDict$moveRedRight = function (dict) {
 			var rRight = _v6.e;
 			if (clr === 1) {
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					1,
 					k,
 					v,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($author$project$XDict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
 			} else {
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					1,
 					k,
 					v,
-					A5($author$project$XDict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($author$project$XDict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
 			}
 		}
 	} else {
 		return dict;
 	}
 };
-var $author$project$XDict$removeHelpPrepEQGT = F7(
+var $author$project$Dict$RBTree$removeHelpPrepEQGT = F7(
 	function (targetKey, dict, color, key, value, left, right) {
 		if ((!left.$) && (!left.a)) {
 			var _v1 = left.a;
@@ -5515,12 +5911,12 @@ var $author$project$XDict$removeHelpPrepEQGT = F7(
 			var lLeft = left.d;
 			var lRight = left.e;
 			return A5(
-				$author$project$XDict$RBNode_elm_builtin,
+				$author$project$Dict$RBTree$RBNode_elm_builtin,
 				color,
 				lK,
 				lV,
 				lLeft,
-				A5($author$project$XDict$RBNode_elm_builtin, 0, key, value, lRight, right));
+				A5($author$project$Dict$RBTree$RBNode_elm_builtin, 0, key, value, lRight, right));
 		} else {
 			_v2$2:
 			while (true) {
@@ -5530,14 +5926,14 @@ var $author$project$XDict$removeHelpPrepEQGT = F7(
 							var _v3 = right.a;
 							var _v4 = right.d;
 							var _v5 = _v4.a;
-							return $author$project$XDict$moveRedRight(dict);
+							return $author$project$Dict$RBTree$moveRedRight(dict);
 						} else {
 							break _v2$2;
 						}
 					} else {
 						var _v6 = right.a;
 						var _v7 = right.d;
-						return $author$project$XDict$moveRedRight(dict);
+						return $author$project$Dict$RBTree$moveRedRight(dict);
 					}
 				} else {
 					break _v2$2;
@@ -5546,7 +5942,7 @@ var $author$project$XDict$removeHelpPrepEQGT = F7(
 			return dict;
 		}
 	});
-var $author$project$XDict$removeMin = function (dict) {
+var $author$project$Dict$RBTree$removeMin = function (dict) {
 	if ((!dict.$) && (!dict.d.$)) {
 		var color = dict.a;
 		var key = dict.b;
@@ -5559,14 +5955,14 @@ var $author$project$XDict$removeMin = function (dict) {
 			if ((!lLeft.$) && (!lLeft.a)) {
 				var _v3 = lLeft.a;
 				return A5(
-					$author$project$XDict$RBNode_elm_builtin,
+					$author$project$Dict$RBTree$RBNode_elm_builtin,
 					color,
 					key,
 					value,
-					$author$project$XDict$removeMin(left),
+					$author$project$Dict$RBTree$removeMin(left),
 					right);
 			} else {
-				var _v4 = $author$project$XDict$moveRedLeft(dict);
+				var _v4 = $author$project$Dict$RBTree$moveRedLeft(dict);
 				if (!_v4.$) {
 					var nColor = _v4.a;
 					var nKey = _v4.b;
@@ -5574,33 +5970,33 @@ var $author$project$XDict$removeMin = function (dict) {
 					var nLeft = _v4.d;
 					var nRight = _v4.e;
 					return A5(
-						$author$project$XDict$balance,
+						$author$project$Dict$RBTree$balance,
 						nColor,
 						nKey,
 						nValue,
-						$author$project$XDict$removeMin(nLeft),
+						$author$project$Dict$RBTree$removeMin(nLeft),
 						nRight);
 				} else {
-					return $author$project$XDict$RBEmpty_elm_builtin;
+					return $author$project$Dict$RBTree$RBEmpty_elm_builtin;
 				}
 			}
 		} else {
 			return A5(
-				$author$project$XDict$RBNode_elm_builtin,
+				$author$project$Dict$RBTree$RBNode_elm_builtin,
 				color,
 				key,
 				value,
-				$author$project$XDict$removeMin(left),
+				$author$project$Dict$RBTree$removeMin(left),
 				right);
 		}
 	} else {
-		return $author$project$XDict$RBEmpty_elm_builtin;
+		return $author$project$Dict$RBTree$RBEmpty_elm_builtin;
 	}
 };
-var $author$project$XDict$removeHelp = F2(
+var $author$project$Dict$RBTree$removeHelp = F2(
 	function (targetKey, dict) {
 		if (dict.$ === -2) {
-			return $author$project$XDict$RBEmpty_elm_builtin;
+			return $author$project$Dict$RBTree$RBEmpty_elm_builtin;
 		} else {
 			var color = dict.a;
 			var key = dict.b;
@@ -5614,14 +6010,14 @@ var $author$project$XDict$removeHelp = F2(
 					if ((!lLeft.$) && (!lLeft.a)) {
 						var _v6 = lLeft.a;
 						return A5(
-							$author$project$XDict$RBNode_elm_builtin,
+							$author$project$Dict$RBTree$RBNode_elm_builtin,
 							color,
 							key,
 							value,
-							A2($author$project$XDict$removeHelp, targetKey, left),
+							A2($author$project$Dict$RBTree$removeHelp, targetKey, left),
 							right);
 					} else {
-						var _v7 = $author$project$XDict$moveRedLeft(dict);
+						var _v7 = $author$project$Dict$RBTree$moveRedLeft(dict);
 						if (!_v7.$) {
 							var nColor = _v7.a;
 							var nKey = _v7.b;
@@ -5629,34 +6025,34 @@ var $author$project$XDict$removeHelp = F2(
 							var nLeft = _v7.d;
 							var nRight = _v7.e;
 							return A5(
-								$author$project$XDict$balance,
+								$author$project$Dict$RBTree$balance,
 								nColor,
 								nKey,
 								nValue,
-								A2($author$project$XDict$removeHelp, targetKey, nLeft),
+								A2($author$project$Dict$RBTree$removeHelp, targetKey, nLeft),
 								nRight);
 						} else {
-							return $author$project$XDict$RBEmpty_elm_builtin;
+							return $author$project$Dict$RBTree$RBEmpty_elm_builtin;
 						}
 					}
 				} else {
 					return A5(
-						$author$project$XDict$RBNode_elm_builtin,
+						$author$project$Dict$RBTree$RBNode_elm_builtin,
 						color,
 						key,
 						value,
-						A2($author$project$XDict$removeHelp, targetKey, left),
+						A2($author$project$Dict$RBTree$removeHelp, targetKey, left),
 						right);
 				}
 			} else {
 				return A2(
-					$author$project$XDict$removeHelpEQGT,
+					$author$project$Dict$RBTree$removeHelpEQGT,
 					targetKey,
-					A7($author$project$XDict$removeHelpPrepEQGT, targetKey, dict, color, key, value, left, right));
+					A7($author$project$Dict$RBTree$removeHelpPrepEQGT, targetKey, dict, color, key, value, left, right));
 			}
 		}
 	});
-var $author$project$XDict$removeHelpEQGT = F2(
+var $author$project$Dict$RBTree$removeHelpEQGT = F2(
 	function (targetKey, dict) {
 		if (!dict.$) {
 			var color = dict.a;
@@ -5665,54 +6061,951 @@ var $author$project$XDict$removeHelpEQGT = F2(
 			var left = dict.d;
 			var right = dict.e;
 			if (_Utils_eq(targetKey, key)) {
-				var _v1 = $author$project$XDict$getMin(right);
+				var _v1 = $author$project$Dict$RBTree$getMin(right);
 				if (!_v1.$) {
 					var minKey = _v1.b;
 					var minValue = _v1.c;
 					return A5(
-						$author$project$XDict$balance,
+						$author$project$Dict$RBTree$balance,
 						color,
 						minKey,
 						minValue,
 						left,
-						$author$project$XDict$removeMin(right));
+						$author$project$Dict$RBTree$removeMin(right));
 				} else {
-					return $author$project$XDict$RBEmpty_elm_builtin;
+					return $author$project$Dict$RBTree$RBEmpty_elm_builtin;
 				}
 			} else {
 				return A5(
-					$author$project$XDict$balance,
+					$author$project$Dict$RBTree$balance,
 					color,
 					key,
 					value,
 					left,
-					A2($author$project$XDict$removeHelp, targetKey, right));
+					A2($author$project$Dict$RBTree$removeHelp, targetKey, right));
 			}
 		} else {
-			return $author$project$XDict$RBEmpty_elm_builtin;
+			return $author$project$Dict$RBTree$RBEmpty_elm_builtin;
 		}
 	});
-var $author$project$XDict$remove = F2(
+var $author$project$Dict$RBTree$remove = F2(
 	function (key, dict) {
-		var _v0 = A2($author$project$XDict$removeHelp, key, dict);
+		var _v0 = A2($author$project$Dict$RBTree$removeHelp, key, dict);
 		if ((!_v0.$) && (!_v0.a)) {
 			var _v1 = _v0.a;
 			var k = _v0.b;
 			var v = _v0.c;
 			var l = _v0.d;
 			var r = _v0.e;
-			return A5($author$project$XDict$RBNode_elm_builtin, 1, k, v, l, r);
+			return A5($author$project$Dict$RBTree$RBNode_elm_builtin, 1, k, v, l, r);
 		} else {
 			var x = _v0;
 			return x;
 		}
 	});
+var $author$project$Dict$TTTree$Merged = function (a) {
+	return {$: 0, a: a};
+};
+var $author$project$Dict$TTTree$NotFoundKey = {$: 2};
+var $author$project$Dict$TTTree$Replaced = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$Dict$TTTree$findNextLarger = F2(
+	function (key, dict) {
+		findNextLarger:
+		while (true) {
+			switch (dict.$) {
+				case 2:
+					return $elm$core$Maybe$Nothing;
+				case 0:
+					if (dict.a.$ === 2) {
+						var _v1 = dict.a;
+						var _v2 = dict.b;
+						var k1 = _v2.a;
+						var v1 = _v2.b;
+						var _v3 = A2($elm$core$Basics$compare, key, k1);
+						if (!_v3) {
+							return $elm$core$Maybe$Just(
+								_Utils_Tuple2(k1, v1));
+						} else {
+							return $elm$core$Maybe$Nothing;
+						}
+					} else {
+						var a = dict.a;
+						var $temp$key = key,
+							$temp$dict = a;
+						key = $temp$key;
+						dict = $temp$dict;
+						continue findNextLarger;
+					}
+				default:
+					if (dict.a.$ === 2) {
+						var _v4 = dict.a;
+						var _v5 = dict.b;
+						var k1 = _v5.a;
+						var v1 = _v5.b;
+						var _v6 = A2($elm$core$Basics$compare, key, k1);
+						if (!_v6) {
+							return $elm$core$Maybe$Just(
+								_Utils_Tuple2(k1, v1));
+						} else {
+							return $elm$core$Maybe$Nothing;
+						}
+					} else {
+						var a = dict.a;
+						var $temp$key = key,
+							$temp$dict = a;
+						key = $temp$key;
+						dict = $temp$dict;
+						continue findNextLarger;
+					}
+			}
+		}
+	});
+var $author$project$Dict$TTTree$removeHelp = F2(
+	function (key, dict) {
+		switch (dict.$) {
+			case 2:
+				return $author$project$Dict$TTTree$NotFoundKey;
+			case 0:
+				if ((dict.a.$ === 2) && (dict.c.$ === 2)) {
+					var _v1 = dict.a;
+					var _v2 = dict.b;
+					var k1 = _v2.a;
+					var _v3 = dict.c;
+					var _v4 = A2($elm$core$Basics$compare, key, k1);
+					if (_v4 === 1) {
+						return $author$project$Dict$TTTree$Merged($author$project$Dict$TTTree$empty);
+					} else {
+						return $author$project$Dict$TTTree$NotFoundKey;
+					}
+				} else {
+					var a = dict.a;
+					var _v13 = dict.b;
+					var k1 = _v13.a;
+					var v1 = _v13.b;
+					var b = dict.c;
+					var _v14 = A2($elm$core$Basics$compare, key, k1);
+					switch (_v14) {
+						case 0:
+							var _v15 = A2($author$project$Dict$TTTree$removeHelp, key, a);
+							switch (_v15.$) {
+								case 2:
+									return $author$project$Dict$TTTree$NotFoundKey;
+								case 0:
+									var merged = _v15.a;
+									switch (b.$) {
+										case 2:
+											return $author$project$Dict$TTTree$NotFoundKey;
+										case 0:
+											var ba = b.a;
+											var _v17 = b.b;
+											var bk1 = _v17.a;
+											var bv1 = _v17.b;
+											var bb = b.c;
+											return $author$project$Dict$TTTree$Merged(
+												A5(
+													$author$project$Dict$TTTree$TTNode3,
+													merged,
+													_Utils_Tuple2(k1, v1),
+													ba,
+													_Utils_Tuple2(bk1, bv1),
+													bb));
+										default:
+											var ba = b.a;
+											var _v18 = b.b;
+											var bk1 = _v18.a;
+											var bv1 = _v18.b;
+											var bb = b.c;
+											var _v19 = b.d;
+											var bk2 = _v19.a;
+											var bv2 = _v19.b;
+											var bc = b.e;
+											return $author$project$Dict$TTTree$Replaced(
+												A3(
+													$author$project$Dict$TTTree$TTNode2,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														merged,
+														_Utils_Tuple2(k1, v1),
+														ba),
+													_Utils_Tuple2(bk1, bv1),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														bb,
+														_Utils_Tuple2(bk2, bv2),
+														bc)));
+									}
+								default:
+									var replaced = _v15.a;
+									return $author$project$Dict$TTTree$Replaced(
+										A3(
+											$author$project$Dict$TTTree$TTNode2,
+											replaced,
+											_Utils_Tuple2(k1, v1),
+											b));
+							}
+						case 1:
+							var _v20 = A2($author$project$Dict$TTTree$findNextLarger, key, b);
+							if (_v20.$ === 1) {
+								return $author$project$Dict$TTTree$NotFoundKey;
+							} else {
+								var _v21 = _v20.a;
+								var keyNext = _v21.a;
+								var valNext = _v21.b;
+								var _v22 = A2($author$project$Dict$TTTree$removeHelp, keyNext, b);
+								switch (_v22.$) {
+									case 2:
+										return $author$project$Dict$TTTree$NotFoundKey;
+									case 0:
+										var merged = _v22.a;
+										switch (a.$) {
+											case 2:
+												return $author$project$Dict$TTTree$NotFoundKey;
+											case 0:
+												var aa = a.a;
+												var _v24 = a.b;
+												var ak1 = _v24.a;
+												var av1 = _v24.b;
+												var ab = a.c;
+												return $author$project$Dict$TTTree$Merged(
+													A5(
+														$author$project$Dict$TTTree$TTNode3,
+														aa,
+														_Utils_Tuple2(ak1, av1),
+														ab,
+														_Utils_Tuple2(keyNext, valNext),
+														merged));
+											default:
+												var aa = a.a;
+												var _v25 = a.b;
+												var ak1 = _v25.a;
+												var av1 = _v25.b;
+												var ab = a.c;
+												var _v26 = a.d;
+												var ak2 = _v26.a;
+												var av2 = _v26.b;
+												var ac = a.e;
+												return $author$project$Dict$TTTree$Replaced(
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														A3(
+															$author$project$Dict$TTTree$TTNode2,
+															aa,
+															_Utils_Tuple2(ak1, av1),
+															ab),
+														_Utils_Tuple2(ak2, av2),
+														A3(
+															$author$project$Dict$TTTree$TTNode2,
+															ac,
+															_Utils_Tuple2(keyNext, valNext),
+															merged)));
+										}
+									default:
+										var replaced = _v22.a;
+										return $author$project$Dict$TTTree$Replaced(
+											A3(
+												$author$project$Dict$TTTree$TTNode2,
+												a,
+												_Utils_Tuple2(keyNext, valNext),
+												replaced));
+								}
+							}
+						default:
+							var _v27 = A2($author$project$Dict$TTTree$removeHelp, key, b);
+							switch (_v27.$) {
+								case 2:
+									return $author$project$Dict$TTTree$NotFoundKey;
+								case 0:
+									var merged = _v27.a;
+									switch (a.$) {
+										case 2:
+											return $author$project$Dict$TTTree$NotFoundKey;
+										case 0:
+											var aa = a.a;
+											var _v29 = a.b;
+											var ak1 = _v29.a;
+											var av1 = _v29.b;
+											var ab = a.c;
+											return $author$project$Dict$TTTree$Merged(
+												A5(
+													$author$project$Dict$TTTree$TTNode3,
+													aa,
+													_Utils_Tuple2(ak1, av1),
+													ab,
+													_Utils_Tuple2(k1, v1),
+													merged));
+										default:
+											var aa = a.a;
+											var _v30 = a.b;
+											var ak1 = _v30.a;
+											var av1 = _v30.b;
+											var ab = a.c;
+											var _v31 = a.d;
+											var ak2 = _v31.a;
+											var av2 = _v31.b;
+											var ac = a.e;
+											return $author$project$Dict$TTTree$Replaced(
+												A3(
+													$author$project$Dict$TTTree$TTNode2,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														aa,
+														_Utils_Tuple2(ak1, av1),
+														ab),
+													_Utils_Tuple2(ak2, av2),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														ac,
+														_Utils_Tuple2(k1, v1),
+														merged)));
+									}
+								default:
+									var replaced = _v27.a;
+									return $author$project$Dict$TTTree$Replaced(
+										A3(
+											$author$project$Dict$TTTree$TTNode2,
+											a,
+											_Utils_Tuple2(k1, v1),
+											replaced));
+							}
+					}
+				}
+			default:
+				if (((dict.a.$ === 2) && (dict.c.$ === 2)) && (dict.e.$ === 2)) {
+					var _v5 = dict.a;
+					var _v6 = dict.b;
+					var k1 = _v6.a;
+					var v1 = _v6.b;
+					var _v7 = dict.c;
+					var _v8 = dict.d;
+					var k2 = _v8.a;
+					var v2 = _v8.b;
+					var _v9 = dict.e;
+					var _v10 = _Utils_Tuple2(
+						A2($elm$core$Basics$compare, key, k1),
+						A2($elm$core$Basics$compare, key, k2));
+					if (_v10.a === 1) {
+						var _v11 = _v10.a;
+						return $author$project$Dict$TTTree$Replaced(
+							A2($author$project$Dict$TTTree$singleton, k2, v2));
+					} else {
+						if (_v10.b === 1) {
+							var _v12 = _v10.b;
+							return $author$project$Dict$TTTree$Replaced(
+								A2($author$project$Dict$TTTree$singleton, k1, v1));
+						} else {
+							return $author$project$Dict$TTTree$NotFoundKey;
+						}
+					}
+				} else {
+					var a = dict.a;
+					var _v32 = dict.b;
+					var k1 = _v32.a;
+					var v1 = _v32.b;
+					var b = dict.c;
+					var _v33 = dict.d;
+					var k2 = _v33.a;
+					var v2 = _v33.b;
+					var c = dict.e;
+					var _v34 = _Utils_Tuple2(
+						A2($elm$core$Basics$compare, key, k1),
+						A2($elm$core$Basics$compare, key, k2));
+					_v34$0:
+					while (true) {
+						_v34$1:
+						while (true) {
+							switch (_v34.b) {
+								case 0:
+									switch (_v34.a) {
+										case 0:
+											break _v34$0;
+										case 1:
+											break _v34$1;
+										default:
+											var _v56 = _v34.b;
+											var _v57 = A2($author$project$Dict$TTTree$removeHelp, key, b);
+											switch (_v57.$) {
+												case 2:
+													return $author$project$Dict$TTTree$NotFoundKey;
+												case 0:
+													var merged = _v57.a;
+													switch (a.$) {
+														case 2:
+															return $author$project$Dict$TTTree$NotFoundKey;
+														case 0:
+															var aa = a.a;
+															var _v59 = a.b;
+															var ak1 = _v59.a;
+															var av1 = _v59.b;
+															var ab = a.c;
+															switch (c.$) {
+																case 2:
+																	return $author$project$Dict$TTTree$NotFoundKey;
+																case 0:
+																	return $author$project$Dict$TTTree$Replaced(
+																		A3(
+																			$author$project$Dict$TTTree$TTNode2,
+																			A5(
+																				$author$project$Dict$TTTree$TTNode3,
+																				aa,
+																				_Utils_Tuple2(ak1, av1),
+																				ab,
+																				_Utils_Tuple2(k1, v1),
+																				merged),
+																			_Utils_Tuple2(k2, v2),
+																			c));
+																default:
+																	var ca = c.a;
+																	var _v61 = c.b;
+																	var ck1 = _v61.a;
+																	var cv1 = _v61.b;
+																	var cb = c.c;
+																	var _v62 = c.d;
+																	var ck2 = _v62.a;
+																	var cv2 = _v62.b;
+																	var cc = c.e;
+																	return $author$project$Dict$TTTree$Replaced(
+																		A5(
+																			$author$project$Dict$TTTree$TTNode3,
+																			a,
+																			_Utils_Tuple2(k1, v1),
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				merged,
+																				_Utils_Tuple2(k2, v2),
+																				ca),
+																			_Utils_Tuple2(ck1, cv1),
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				cb,
+																				_Utils_Tuple2(ck2, cv2),
+																				cc)));
+															}
+														default:
+															var aa = a.a;
+															var _v63 = a.b;
+															var ak1 = _v63.a;
+															var av1 = _v63.b;
+															var ab = a.c;
+															var _v64 = a.d;
+															var ak2 = _v64.a;
+															var av2 = _v64.b;
+															var ac = a.e;
+															return $author$project$Dict$TTTree$Replaced(
+																A5(
+																	$author$project$Dict$TTTree$TTNode3,
+																	A3(
+																		$author$project$Dict$TTTree$TTNode2,
+																		aa,
+																		_Utils_Tuple2(ak1, av1),
+																		ab),
+																	_Utils_Tuple2(ak2, av2),
+																	A3(
+																		$author$project$Dict$TTTree$TTNode2,
+																		ac,
+																		_Utils_Tuple2(k1, v1),
+																		merged),
+																	_Utils_Tuple2(k2, v2),
+																	c));
+													}
+												default:
+													var replaced = _v57.a;
+													return $author$project$Dict$TTTree$Replaced(
+														A5(
+															$author$project$Dict$TTTree$TTNode3,
+															a,
+															_Utils_Tuple2(k1, v1),
+															replaced,
+															_Utils_Tuple2(k2, v2),
+															c));
+											}
+									}
+								case 1:
+									switch (_v34.a) {
+										case 0:
+											break _v34$0;
+										case 1:
+											break _v34$1;
+										default:
+											var _v65 = _v34.b;
+											var _v66 = A2($author$project$Dict$TTTree$findNextLarger, key, c);
+											if (_v66.$ === 1) {
+												return $author$project$Dict$TTTree$NotFoundKey;
+											} else {
+												var _v67 = _v66.a;
+												var keyNext = _v67.a;
+												var valNext = _v67.b;
+												var _v68 = A2($author$project$Dict$TTTree$removeHelp, keyNext, c);
+												switch (_v68.$) {
+													case 2:
+														return $author$project$Dict$TTTree$NotFoundKey;
+													case 0:
+														var merged = _v68.a;
+														switch (b.$) {
+															case 2:
+																return $author$project$Dict$TTTree$NotFoundKey;
+															case 0:
+																var ba = b.a;
+																var _v70 = b.b;
+																var bk1 = _v70.a;
+																var bv1 = _v70.b;
+																var bb = b.c;
+																switch (a.$) {
+																	case 2:
+																		return $author$project$Dict$TTTree$NotFoundKey;
+																	case 0:
+																		var aa = a.a;
+																		var _v72 = a.b;
+																		var ak1 = _v72.a;
+																		var av1 = _v72.b;
+																		var ab = a.c;
+																		return $author$project$Dict$TTTree$Replaced(
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				A5(
+																					$author$project$Dict$TTTree$TTNode3,
+																					aa,
+																					_Utils_Tuple2(ak1, av1),
+																					ab,
+																					_Utils_Tuple2(k1, v1),
+																					ba),
+																				_Utils_Tuple2(bk1, bv1),
+																				A3(
+																					$author$project$Dict$TTTree$TTNode2,
+																					bb,
+																					_Utils_Tuple2(keyNext, valNext),
+																					merged)));
+																	default:
+																		var aa = a.a;
+																		var _v73 = a.b;
+																		var ak1 = _v73.a;
+																		var av1 = _v73.b;
+																		var ab = a.c;
+																		var _v74 = a.d;
+																		var ak2 = _v74.a;
+																		var av2 = _v74.b;
+																		var ac = a.e;
+																		return $author$project$Dict$TTTree$Replaced(
+																			A5(
+																				$author$project$Dict$TTTree$TTNode3,
+																				A3(
+																					$author$project$Dict$TTTree$TTNode2,
+																					aa,
+																					_Utils_Tuple2(ak1, av1),
+																					ab),
+																				_Utils_Tuple2(ak2, av2),
+																				A3(
+																					$author$project$Dict$TTTree$TTNode2,
+																					ac,
+																					_Utils_Tuple2(k1, v1),
+																					ba),
+																				_Utils_Tuple2(bk1, bv1),
+																				A3(
+																					$author$project$Dict$TTTree$TTNode2,
+																					bb,
+																					_Utils_Tuple2(keyNext, valNext),
+																					merged)));
+																}
+															default:
+																var ba = b.a;
+																var _v75 = b.b;
+																var bk1 = _v75.a;
+																var bv1 = _v75.b;
+																var bb = b.c;
+																var _v76 = b.d;
+																var bk2 = _v76.a;
+																var bv2 = _v76.b;
+																var bc = b.e;
+																return $author$project$Dict$TTTree$Replaced(
+																	A5(
+																		$author$project$Dict$TTTree$TTNode3,
+																		a,
+																		_Utils_Tuple2(k1, v1),
+																		A3(
+																			$author$project$Dict$TTTree$TTNode2,
+																			ba,
+																			_Utils_Tuple2(bk1, bv1),
+																			bb),
+																		_Utils_Tuple2(bk2, bv2),
+																		A3(
+																			$author$project$Dict$TTTree$TTNode2,
+																			bc,
+																			_Utils_Tuple2(keyNext, valNext),
+																			merged)));
+														}
+													default:
+														var replaced = _v68.a;
+														return $author$project$Dict$TTTree$Replaced(
+															A5(
+																$author$project$Dict$TTTree$TTNode3,
+																a,
+																_Utils_Tuple2(k1, v1),
+																b,
+																_Utils_Tuple2(keyNext, valNext),
+																replaced));
+												}
+											}
+									}
+								default:
+									switch (_v34.a) {
+										case 0:
+											break _v34$0;
+										case 1:
+											break _v34$1;
+										default:
+											var _v77 = _v34.b;
+											var _v78 = A2($author$project$Dict$TTTree$removeHelp, key, c);
+											switch (_v78.$) {
+												case 2:
+													return $author$project$Dict$TTTree$NotFoundKey;
+												case 0:
+													var merged = _v78.a;
+													switch (b.$) {
+														case 2:
+															return $author$project$Dict$TTTree$NotFoundKey;
+														case 0:
+															var ba = b.a;
+															var _v80 = b.b;
+															var bk1 = _v80.a;
+															var bv1 = _v80.b;
+															var bb = b.c;
+															switch (a.$) {
+																case 2:
+																	return $author$project$Dict$TTTree$NotFoundKey;
+																case 0:
+																	var aa = a.a;
+																	var _v82 = a.b;
+																	var ak1 = _v82.a;
+																	var av1 = _v82.b;
+																	var ab = a.c;
+																	return $author$project$Dict$TTTree$Replaced(
+																		A3(
+																			$author$project$Dict$TTTree$TTNode2,
+																			A5(
+																				$author$project$Dict$TTTree$TTNode3,
+																				aa,
+																				_Utils_Tuple2(ak1, av1),
+																				ab,
+																				_Utils_Tuple2(k1, v1),
+																				ba),
+																			_Utils_Tuple2(bk1, bv1),
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				bb,
+																				_Utils_Tuple2(k2, v2),
+																				merged)));
+																default:
+																	var aa = a.a;
+																	var _v83 = a.b;
+																	var ak1 = _v83.a;
+																	var av1 = _v83.b;
+																	var ab = a.c;
+																	var _v84 = a.d;
+																	var ak2 = _v84.a;
+																	var av2 = _v84.b;
+																	var ac = a.e;
+																	return $author$project$Dict$TTTree$Replaced(
+																		A5(
+																			$author$project$Dict$TTTree$TTNode3,
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				aa,
+																				_Utils_Tuple2(ak1, av1),
+																				ab),
+																			_Utils_Tuple2(ak2, av2),
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				ac,
+																				_Utils_Tuple2(k1, v1),
+																				ba),
+																			_Utils_Tuple2(bk1, bv1),
+																			A3(
+																				$author$project$Dict$TTTree$TTNode2,
+																				bb,
+																				_Utils_Tuple2(k2, v2),
+																				merged)));
+															}
+														default:
+															var ba = b.a;
+															var _v85 = b.b;
+															var bk1 = _v85.a;
+															var bv1 = _v85.b;
+															var bb = b.c;
+															var _v86 = b.d;
+															var bk2 = _v86.a;
+															var bv2 = _v86.b;
+															var bc = b.e;
+															return $author$project$Dict$TTTree$Replaced(
+																A5(
+																	$author$project$Dict$TTTree$TTNode3,
+																	a,
+																	_Utils_Tuple2(k1, v1),
+																	A3(
+																		$author$project$Dict$TTTree$TTNode2,
+																		ba,
+																		_Utils_Tuple2(bk1, bv1),
+																		bb),
+																	_Utils_Tuple2(bk2, bv2),
+																	A3(
+																		$author$project$Dict$TTTree$TTNode2,
+																		bc,
+																		_Utils_Tuple2(k2, v2),
+																		merged)));
+													}
+												default:
+													var replaced = _v78.a;
+													return $author$project$Dict$TTTree$Replaced(
+														A5(
+															$author$project$Dict$TTTree$TTNode3,
+															a,
+															_Utils_Tuple2(k1, v1),
+															b,
+															_Utils_Tuple2(k2, v2),
+															replaced));
+											}
+									}
+							}
+						}
+						var _v45 = _v34.a;
+						var _v46 = A2($author$project$Dict$TTTree$findNextLarger, key, b);
+						if (_v46.$ === 1) {
+							return $author$project$Dict$TTTree$NotFoundKey;
+						} else {
+							var _v47 = _v46.a;
+							var keyNext = _v47.a;
+							var valNext = _v47.b;
+							var _v48 = A2($author$project$Dict$TTTree$removeHelp, keyNext, b);
+							switch (_v48.$) {
+								case 2:
+									return $author$project$Dict$TTTree$NotFoundKey;
+								case 0:
+									var merged = _v48.a;
+									switch (a.$) {
+										case 2:
+											return $author$project$Dict$TTTree$NotFoundKey;
+										case 0:
+											var aa = a.a;
+											var _v50 = a.b;
+											var ak1 = _v50.a;
+											var av1 = _v50.b;
+											var ab = a.c;
+											switch (c.$) {
+												case 2:
+													return $author$project$Dict$TTTree$NotFoundKey;
+												case 0:
+													return $author$project$Dict$TTTree$Replaced(
+														A3(
+															$author$project$Dict$TTTree$TTNode2,
+															A5(
+																$author$project$Dict$TTTree$TTNode3,
+																aa,
+																_Utils_Tuple2(ak1, av1),
+																ab,
+																_Utils_Tuple2(keyNext, valNext),
+																merged),
+															_Utils_Tuple2(k2, v2),
+															c));
+												default:
+													var ca = c.a;
+													var _v52 = c.b;
+													var ck1 = _v52.a;
+													var cv1 = _v52.b;
+													var cb = c.c;
+													var _v53 = c.d;
+													var ck2 = _v53.a;
+													var cv2 = _v53.b;
+													var cc = c.e;
+													return $author$project$Dict$TTTree$Replaced(
+														A5(
+															$author$project$Dict$TTTree$TTNode3,
+															a,
+															_Utils_Tuple2(keyNext, valNext),
+															A3(
+																$author$project$Dict$TTTree$TTNode2,
+																merged,
+																_Utils_Tuple2(k2, v2),
+																ca),
+															_Utils_Tuple2(ck1, cv1),
+															A3(
+																$author$project$Dict$TTTree$TTNode2,
+																cb,
+																_Utils_Tuple2(ck2, cv2),
+																cc)));
+											}
+										default:
+											var aa = a.a;
+											var _v54 = a.b;
+											var ak1 = _v54.a;
+											var av1 = _v54.b;
+											var ab = a.c;
+											var _v55 = a.d;
+											var ak2 = _v55.a;
+											var av2 = _v55.b;
+											var ac = a.e;
+											return $author$project$Dict$TTTree$Replaced(
+												A5(
+													$author$project$Dict$TTTree$TTNode3,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														aa,
+														_Utils_Tuple2(ak1, av1),
+														ab),
+													_Utils_Tuple2(ak2, av2),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														ac,
+														_Utils_Tuple2(k1, v1),
+														merged),
+													_Utils_Tuple2(k2, v2),
+													c));
+									}
+								default:
+									var replaced = _v48.a;
+									return $author$project$Dict$TTTree$Replaced(
+										A5(
+											$author$project$Dict$TTTree$TTNode3,
+											a,
+											_Utils_Tuple2(keyNext, valNext),
+											replaced,
+											_Utils_Tuple2(k2, v2),
+											c));
+							}
+						}
+					}
+					var _v35 = _v34.a;
+					var _v36 = A2($author$project$Dict$TTTree$removeHelp, key, a);
+					switch (_v36.$) {
+						case 2:
+							return $author$project$Dict$TTTree$NotFoundKey;
+						case 0:
+							var merged = _v36.a;
+							switch (b.$) {
+								case 2:
+									return $author$project$Dict$TTTree$NotFoundKey;
+								case 0:
+									var ba = b.a;
+									var _v38 = b.b;
+									var bk1 = _v38.a;
+									var bv1 = _v38.b;
+									var bb = b.c;
+									switch (c.$) {
+										case 2:
+											return $author$project$Dict$TTTree$NotFoundKey;
+										case 0:
+											var ca = c.a;
+											var _v40 = c.b;
+											var ck1 = _v40.a;
+											var cv1 = _v40.b;
+											var cb = c.c;
+											return $author$project$Dict$TTTree$Replaced(
+												A3(
+													$author$project$Dict$TTTree$TTNode2,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														merged,
+														_Utils_Tuple2(k1, v1),
+														ba),
+													_Utils_Tuple2(bk1, bv1),
+													A5(
+														$author$project$Dict$TTTree$TTNode3,
+														bb,
+														_Utils_Tuple2(k2, v2),
+														ca,
+														_Utils_Tuple2(ck1, cv1),
+														cb)));
+										default:
+											var ca = c.a;
+											var _v41 = c.b;
+											var ck1 = _v41.a;
+											var cv1 = _v41.b;
+											var cb = c.c;
+											var _v42 = c.d;
+											var ck2 = _v42.a;
+											var cv2 = _v42.b;
+											var cc = c.e;
+											return $author$project$Dict$TTTree$Replaced(
+												A5(
+													$author$project$Dict$TTTree$TTNode3,
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														merged,
+														_Utils_Tuple2(k1, v1),
+														ba),
+													_Utils_Tuple2(bk1, bv1),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														bb,
+														_Utils_Tuple2(k2, v2),
+														ca),
+													_Utils_Tuple2(ck1, cv1),
+													A3(
+														$author$project$Dict$TTTree$TTNode2,
+														cb,
+														_Utils_Tuple2(ck2, cv2),
+														cc)));
+									}
+								default:
+									var ba = b.a;
+									var _v43 = b.b;
+									var bk1 = _v43.a;
+									var bv1 = _v43.b;
+									var bb = b.c;
+									var _v44 = b.d;
+									var bk2 = _v44.a;
+									var bv2 = _v44.b;
+									var bc = b.e;
+									return $author$project$Dict$TTTree$Replaced(
+										A5(
+											$author$project$Dict$TTTree$TTNode3,
+											A3(
+												$author$project$Dict$TTTree$TTNode2,
+												merged,
+												_Utils_Tuple2(k1, v1),
+												ba),
+											_Utils_Tuple2(bk1, bv1),
+											A3(
+												$author$project$Dict$TTTree$TTNode2,
+												bb,
+												_Utils_Tuple2(bk2, bv2),
+												bc),
+											_Utils_Tuple2(k2, v2),
+											c));
+							}
+						default:
+							var replaced = _v36.a;
+							return $author$project$Dict$TTTree$Replaced(
+								A5(
+									$author$project$Dict$TTTree$TTNode3,
+									replaced,
+									_Utils_Tuple2(k1, v1),
+									b,
+									_Utils_Tuple2(k2, v2),
+									c));
+					}
+				}
+		}
+	});
+var $author$project$Dict$TTTree$remove = F2(
+	function (key, dict) {
+		var _v0 = A2($author$project$Dict$TTTree$removeHelp, key, dict);
+		switch (_v0.$) {
+			case 0:
+				var _new = _v0.a;
+				return _new;
+			case 1:
+				var _new = _v0.a;
+				return _new;
+			default:
+				return dict;
+		}
+	});
 var $author$project$Main$removeOk = function (model) {
-	var trimmedForm = $elm$core$String$trim(model.D);
-	var _v0 = $elm$core$String$toInt(trimmedForm);
+	var _v0 = $elm$core$String$toInt(
+		$elm$core$String$trim(model.F));
 	if (!_v0.$) {
 		var x = _v0.a;
-		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please input 0-99.') : (A2($author$project$XDict$member, x, model.z) ? $elm$core$Result$Ok(x) : $elm$core$Result$Err(
+		return ((x > 99) || (x < 0)) ? $elm$core$Result$Err('Please enter 0-99.') : (A2($author$project$Dict$RBTree$member, x, model.A) ? $elm$core$Result$Ok(x) : $elm$core$Result$Err(
 			'KEY:' + ($elm$core$String$fromInt(x) + ' is not a member.')));
 	} else {
 		return $elm$core$Result$Err('Unable to convert to Int.');
@@ -5725,23 +7018,24 @@ var $author$project$Main$update = F2(
 				var form = msg.a;
 				return _Utils_update(
 					model,
-					{D: form});
+					{F: form});
 			case 1:
 				var _v1 = $author$project$Main$insertOk(model);
 				if (!_v1.$) {
 					var key = _v1.a;
 					return {
-						z: A3($author$project$XDict$insert, key, 0, model.z),
-						D: '',
-						L: $author$project$Shared$Success(
-							'KEY:' + ($elm$core$String$fromInt(key) + ' was inserted.'))
+						F: '',
+						A: A3($author$project$Dict$RBTree$insert, key, 0, model.A),
+						N: $author$project$Shared$Success(
+							'KEY:' + ($elm$core$String$fromInt(key) + ' was inserted.')),
+						O: A3($author$project$Dict$TTTree$insert, key, 0, model.O)
 					};
 				} else {
 					var error = _v1.a;
 					return _Utils_update(
 						model,
 						{
-							L: $author$project$Shared$Error(error)
+							N: $author$project$Shared$Error(error)
 						});
 				}
 			default:
@@ -5749,17 +7043,18 @@ var $author$project$Main$update = F2(
 				if (!_v2.$) {
 					var key = _v2.a;
 					return {
-						z: A2($author$project$XDict$remove, key, model.z),
-						D: '',
-						L: $author$project$Shared$Success(
-							'KEY:' + ($elm$core$String$fromInt(key) + ' was removed.'))
+						F: '',
+						A: A2($author$project$Dict$RBTree$remove, key, model.A),
+						N: $author$project$Shared$Success(
+							'KEY:' + ($elm$core$String$fromInt(key) + ' was removed.')),
+						O: A2($author$project$Dict$TTTree$remove, key, model.O)
 					};
 				} else {
 					var error = _v2.a;
 					return _Utils_update(
 						model,
 						{
-							L: $author$project$Shared$Error(error)
+							N: $author$project$Shared$Error(error)
 						});
 				}
 		}
@@ -5830,7 +7125,7 @@ var $author$project$View$alert_ = function (status) {
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('alert ' + data.N)
+					$elm$html$Html$Attributes$class('alert ' + data.Q)
 				]),
 			_List_fromArray(
 				[
@@ -5841,7 +7136,7 @@ var $author$project$View$alert_ = function (status) {
 							$elm$html$Html$Attributes$class('icon')
 						]),
 					_List_fromArray(
-						[data.M])),
+						[data.P])),
 					A2(
 					$elm$html$Html$div,
 					_List_fromArray(
@@ -5850,7 +7145,7 @@ var $author$project$View$alert_ = function (status) {
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(data.t)
+							$elm$html$Html$text(data.f)
 						]))
 				]));
 	};
@@ -5866,11 +7161,11 @@ var $author$project$View$alert_ = function (status) {
 		case 1:
 			var value = status.a;
 			return layout(
-				{t: value, M: $author$project$View$successIcon, N: 'success'});
+				{f: value, P: $author$project$View$successIcon, Q: 'success'});
 		default:
 			var value = status.a;
 			return layout(
-				{t: value, M: $author$project$View$errorIcon, N: 'error'});
+				{f: value, P: $author$project$View$errorIcon, Q: 'error'});
 	}
 };
 var $elm$html$Html$button = _VirtualDom_node('button');
@@ -5926,7 +7221,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawInternal = F6(
 		var v = _v1.a;
 		var rootCoord = _v1.b;
 		var subtrees = _v0.b;
-		var transRootCoord = A3(drawer.V, width, height, rootCoord);
+		var transRootCoord = A3(drawer.Y, width, height, rootCoord);
 		var subtreePositions = A2(
 			$elm$core$List$map,
 			function (_v4) {
@@ -5937,10 +7232,10 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawInternal = F6(
 			subtrees);
 		var transSubtreePositions = A2(
 			$elm$core$List$map,
-			A2(drawer.V, width, height),
+			A2(drawer.Y, width, height),
 			subtreePositions);
 		var rootDrawing = A2(
-			drawer.Q,
+			drawer.T,
 			transRootCoord,
 			drawNode(v));
 		var _v2 = transRootCoord;
@@ -5958,7 +7253,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawInternal = F6(
 			$elm$core$List$map,
 			function (coord) {
 				return A2(
-					drawer.Q,
+					drawer.T,
 					transRootCoord,
 					drawLine(coord));
 			},
@@ -6092,7 +7387,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$drawPositioned = F5(
 		var totalHeight = $elm$core$Basics$round(height) + (2 * padding);
 		var totalWidth = $elm$core$Basics$round(width) + (2 * padding);
 		return A3(
-			drawer.Y,
+			drawer.aa,
 			totalWidth,
 			totalHeight,
 			A6($alex_tan$elm_tree_diagram$TreeDiagram$drawInternal, totalWidth, totalHeight, drawer, drawNode, drawLine, positionedTree));
@@ -6119,11 +7414,11 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$final = F4(
 			$elm$core$List$map2,
 			F2(
 				function (prelimPos, subtree) {
-					return A4($alex_tan$elm_tree_diagram$TreeDiagram$final, level + 1, levelHeight, lOffset + prelimPos.r, subtree);
+					return A4($alex_tan$elm_tree_diagram$TreeDiagram$final, level + 1, levelHeight, lOffset + prelimPos.t, subtree);
 				}),
 			subtreePrelimPositions,
 			subtrees);
-		var finalPosition = _Utils_Tuple2(lOffset + prelimPosition.q, level * levelHeight);
+		var finalPosition = _Utils_Tuple2(lOffset + prelimPosition.s, level * levelHeight);
 		return A2(
 			$alex_tan$elm_tree_diagram$TreeDiagram$Node,
 			_Utils_Tuple2(v, finalPosition),
@@ -6223,7 +7518,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$ends = function (list) {
 };
 var $alex_tan$elm_tree_diagram$TreeDiagram$rootOffset = F2(
 	function (lPrelimPosition, rPrelimPosition) {
-		return ((((lPrelimPosition.r + rPrelimPosition.r) + lPrelimPosition.q) + rPrelimPosition.q) / 2) | 0;
+		return ((((lPrelimPosition.t + rPrelimPosition.t) + lPrelimPosition.s) + rPrelimPosition.s) / 2) | 0;
 	});
 var $alex_tan$elm_tree_diagram$TreeDiagram$pairwiseSubtreeOffset = F4(
 	function (siblingDistance, subtreeDistance, lContour, rContour) {
@@ -6322,7 +7617,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$prelim = F3(
 							v,
 							_Utils_update(
 								prelimPosition,
-								{r: offset})),
+								{t: offset})),
 						children_);
 				}),
 			subtrees,
@@ -6351,14 +7646,14 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$prelim = F3(
 			var _v9 = _v8.a;
 			var lPrelimPos = _v9.b;
 			var prelimPos = {
-				q: A2($alex_tan$elm_tree_diagram$TreeDiagram$rootOffset, lPrelimPos, rPrelimPos),
-				r: 0
+				s: A2($alex_tan$elm_tree_diagram$TreeDiagram$rootOffset, lPrelimPos, rPrelimPos),
+				t: 0
 			};
-			var rootContour = _Utils_Tuple2(prelimPos.q, prelimPos.q);
+			var rootContour = _Utils_Tuple2(prelimPos.s, prelimPos.s);
 			var treeContour = A2(
 				$elm$core$List$cons,
 				rootContour,
-				A3($alex_tan$elm_tree_diagram$TreeDiagram$buildContour, lSubtreeContour, rSubtreeContour, rPrelimPos.r));
+				A3($alex_tan$elm_tree_diagram$TreeDiagram$buildContour, lSubtreeContour, rSubtreeContour, rPrelimPos.t));
 			return _Utils_Tuple2(
 				A2(
 					$alex_tan$elm_tree_diagram$TreeDiagram$Node,
@@ -6371,7 +7666,7 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$prelim = F3(
 					$alex_tan$elm_tree_diagram$TreeDiagram$Node,
 					_Utils_Tuple2(
 						val,
-						{q: 0, r: 0}),
+						{s: 0, t: 0}),
 					updatedChildren),
 				_List_fromArray(
 					[
@@ -6426,12 +7721,12 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$position = F5(
 	});
 var $alex_tan$elm_tree_diagram$TreeDiagram$draw_ = F5(
 	function (drawer, layout, drawNode, drawLine, tree) {
-		var positionedTree = A5($alex_tan$elm_tree_diagram$TreeDiagram$position, layout.aP, layout.aR, layout.aH, layout.aM, tree);
-		return A5($alex_tan$elm_tree_diagram$TreeDiagram$drawPositioned, drawer, layout.aN, drawNode, drawLine, positionedTree);
+		var positionedTree = A5($alex_tan$elm_tree_diagram$TreeDiagram$position, layout.ax, layout.az, layout.ai, layout.al, tree);
+		return A5($alex_tan$elm_tree_diagram$TreeDiagram$drawPositioned, drawer, layout.am, drawNode, drawLine, positionedTree);
 	});
 var $alex_tan$elm_tree_diagram$TreeDiagram$Drawable = F3(
 	function (position, compose, transform) {
-		return {Y: compose, Q: position, V: transform};
+		return {aa: compose, T: position, Y: transform};
 	});
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
 var $alex_tan$elm_tree_diagram$TreeDiagram$Svg$svgCompose = F3(
@@ -6486,7 +7781,7 @@ var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
 var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$View$drawEdge = function (_v0) {
+var $author$project$View$drawRBEdge = function (_v0) {
 	var targetX = _v0.a;
 	var targetY = _v0.b;
 	return A2(
@@ -6508,7 +7803,7 @@ var $elm$svg$Svg$Attributes$rx = _VirtualDom_attribute('rx');
 var $elm$svg$Svg$Attributes$ry = _VirtualDom_attribute('ry');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $author$project$View$drawLeaf = A2(
+var $author$project$View$drawRBLeaf = A2(
 	$elm$svg$Svg$g,
 	_List_Nil,
 	_List_fromArray(
@@ -6529,12 +7824,12 @@ var $author$project$View$drawLeaf = A2(
 		]));
 var $elm$svg$Svg$Attributes$textAnchor = _VirtualDom_attribute('text-anchor');
 var $elm$svg$Svg$text_ = $elm$svg$Svg$trustedNode('text');
-var $author$project$View$drawNode = function (node) {
-	if (node.K) {
-		return $author$project$View$drawLeaf;
+var $author$project$View$drawRBNode = function (node) {
+	if (node.m) {
+		return $author$project$View$drawRBLeaf;
 	} else {
 		var bg = function () {
-			var _v0 = node.J;
+			var _v0 = node.M;
 			if (!_v0) {
 				return '#ff0000';
 			} else {
@@ -6569,7 +7864,7 @@ var $author$project$View$drawNode = function (node) {
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(node.t)
+							$elm$html$Html$text(node.f)
 						]))
 				]));
 	}
@@ -6580,18 +7875,18 @@ var $alex_tan$elm_tree_diagram$TreeDiagram$node = F2(
 	function (val, children) {
 		return A2($alex_tan$elm_tree_diagram$TreeDiagram$Node, val, children);
 	});
-var $author$project$View$visualizeRBT = function (expr) {
-	if (!expr.$) {
-		var color = expr.a;
-		var key = expr.b;
-		var lExpr = expr.d;
-		var rExpr = expr.e;
+var $author$project$View$visualizeRBT = function (rbt) {
+	if (!rbt.$) {
+		var color = rbt.a;
+		var key = rbt.b;
+		var lExpr = rbt.d;
+		var rExpr = rbt.e;
 		return A2(
 			$alex_tan$elm_tree_diagram$TreeDiagram$node,
 			{
-				J: color,
-				t: $elm$core$String$fromInt(key),
-				K: false
+				M: color,
+				f: $elm$core$String$fromInt(key),
+				m: false
 			},
 			_List_fromArray(
 				[
@@ -6601,17 +7896,197 @@ var $author$project$View$visualizeRBT = function (expr) {
 	} else {
 		return A2(
 			$alex_tan$elm_tree_diagram$TreeDiagram$node,
-			{J: 1, t: '', K: true},
+			{M: 1, f: '', m: true},
 			_List_Nil);
 	}
 };
-var $author$project$View$drawRBT = function (expr) {
-	return A4(
-		$alex_tan$elm_tree_diagram$TreeDiagram$Svg$draw,
-		{aH: 40, aM: $alex_tan$elm_tree_diagram$TreeDiagram$topToBottom, aN: 40, aP: 100, aR: 80},
-		$author$project$View$drawNode,
-		$author$project$View$drawEdge,
-		$author$project$View$visualizeRBT(expr));
+var $author$project$View$drawRBT = function (rbt) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('rbt')
+			]),
+		_List_fromArray(
+			[
+				A4(
+				$alex_tan$elm_tree_diagram$TreeDiagram$Svg$draw,
+				{ai: 40, al: $alex_tan$elm_tree_diagram$TreeDiagram$topToBottom, am: 40, ax: 100, az: 80},
+				$author$project$View$drawRBNode,
+				$author$project$View$drawRBEdge,
+				$author$project$View$visualizeRBT(rbt))
+			]));
+};
+var $author$project$View$drawTTEdge = function (_v0) {
+	var targetX = _v0.a;
+	var targetY = _v0.b;
+	return A2(
+		$elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x1('0'),
+				$elm$svg$Svg$Attributes$y1('0'),
+				$elm$svg$Svg$Attributes$x2(
+				$elm$core$String$fromFloat(targetX)),
+				$elm$svg$Svg$Attributes$y2(
+				$elm$core$String$fromFloat(targetY)),
+				$elm$svg$Svg$Attributes$stroke('black')
+			]),
+		_List_Nil);
+};
+var $author$project$View$drawTTLeaf = A2(
+	$elm$svg$Svg$g,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$svg$Svg$rect,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$rx('10'),
+					$elm$svg$Svg$Attributes$ry('10'),
+					$elm$svg$Svg$Attributes$x('-10'),
+					$elm$svg$Svg$Attributes$y('-10'),
+					$elm$svg$Svg$Attributes$height('20'),
+					$elm$svg$Svg$Attributes$width('20'),
+					$elm$svg$Svg$Attributes$fill('#cccccc')
+				]),
+			_List_Nil)
+		]));
+var $author$project$View$drawTTNode = function (node) {
+	if (node.m) {
+		return $author$project$View$drawTTLeaf;
+	} else {
+		var lineBg = ($elm$core$List$length(node.f) === 2) ? '#ffffff' : '#000000';
+		return A2(
+			$elm$svg$Svg$g,
+			_List_Nil,
+			A2(
+				$elm$core$List$cons,
+				A2(
+					$elm$svg$Svg$rect,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$rx('15'),
+							$elm$svg$Svg$Attributes$ry('15'),
+							$elm$svg$Svg$Attributes$x(
+							$elm$core$String$fromInt(node.C)),
+							$elm$svg$Svg$Attributes$y('-15'),
+							$elm$svg$Svg$Attributes$height('30'),
+							$elm$svg$Svg$Attributes$width(
+							$elm$core$String$fromInt(node.C * (-2))),
+							$elm$svg$Svg$Attributes$fill('#000000')
+						]),
+					_List_Nil),
+				A2(
+					$elm$core$List$cons,
+					A2(
+						$elm$svg$Svg$line,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$x1('0'),
+								$elm$svg$Svg$Attributes$x2('0'),
+								$elm$svg$Svg$Attributes$y1('-12'),
+								$elm$svg$Svg$Attributes$y2('12'),
+								$elm$svg$Svg$Attributes$stroke(lineBg)
+							]),
+						_List_Nil),
+					A3(
+						$elm$core$List$map2,
+						F2(
+							function (textX, content) {
+								return A2(
+									$elm$svg$Svg$text_,
+									_List_fromArray(
+										[
+											$elm$svg$Svg$Attributes$x(textX),
+											$elm$svg$Svg$Attributes$textAnchor('middle'),
+											$elm$svg$Svg$Attributes$transform('translate(0,5)'),
+											$elm$svg$Svg$Attributes$fill('#ffffff')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(content)
+										]));
+							}),
+						node.I,
+						node.f))));
+	}
+};
+var $author$project$View$visualizeTTT = function (ttt) {
+	switch (ttt.$) {
+		case 0:
+			var a = ttt.a;
+			var _v1 = ttt.b;
+			var k1 = _v1.a;
+			var b = ttt.c;
+			return A2(
+				$alex_tan$elm_tree_diagram$TreeDiagram$node,
+				{
+					f: _List_fromArray(
+						[
+							$elm$core$String$fromInt(k1)
+						]),
+					m: false,
+					C: -25,
+					I: _List_fromArray(
+						['0'])
+				},
+				_List_fromArray(
+					[
+						$author$project$View$visualizeTTT(a),
+						$author$project$View$visualizeTTT(b)
+					]));
+		case 1:
+			var a = ttt.a;
+			var _v2 = ttt.b;
+			var k1 = _v2.a;
+			var b = ttt.c;
+			var _v3 = ttt.d;
+			var k2 = _v3.a;
+			var c = ttt.e;
+			return A2(
+				$alex_tan$elm_tree_diagram$TreeDiagram$node,
+				{
+					f: _List_fromArray(
+						[
+							$elm$core$String$fromInt(k1),
+							$elm$core$String$fromInt(k2)
+						]),
+					m: false,
+					C: -50,
+					I: _List_fromArray(
+						['-25', '25'])
+				},
+				_List_fromArray(
+					[
+						$author$project$View$visualizeTTT(a),
+						$author$project$View$visualizeTTT(b),
+						$author$project$View$visualizeTTT(c)
+					]));
+		default:
+			return A2(
+				$alex_tan$elm_tree_diagram$TreeDiagram$node,
+				{f: _List_Nil, m: true, C: 0, I: _List_Nil},
+				_List_Nil);
+	}
+};
+var $author$project$View$drawTTT = function (ttt) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('ttt')
+			]),
+		_List_fromArray(
+			[
+				A4(
+				$alex_tan$elm_tree_diagram$TreeDiagram$Svg$draw,
+				{ai: 40, al: $alex_tan$elm_tree_diagram$TreeDiagram$topToBottom, am: 40, ax: 100, az: 80},
+				$author$project$View$drawTTNode,
+				$author$project$View$drawTTEdge,
+				$author$project$View$visualizeTTT(ttt))
+			]));
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $author$project$Shared$EnteredKey = function (a) {
@@ -6697,21 +8172,25 @@ var $author$project$View$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$View$alert_(model.L),
-						$author$project$View$input_(model.D),
+						$author$project$View$alert_(model.N),
+						$author$project$View$input_(model.F),
 						A2($author$project$View$button_, $author$project$Shared$InsertKey, 'INSERT'),
 						A2($author$project$View$button_, $author$project$Shared$RemoveKey, 'REMOVE')
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
 				_List_fromArray(
 					[
-						$author$project$View$drawRBT(model.z)
+						$elm$html$Html$Attributes$class('rb-graph')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$drawRBT(model.A),
+						$author$project$View$drawTTT(model.O)
 					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(
-	{aG: $author$project$Shared$init, aT: $author$project$Main$update, aU: $author$project$View$view});
+	{aO: $author$project$Shared$init, aW: $author$project$Main$update, aX: $author$project$View$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
